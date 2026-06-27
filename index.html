@@ -413,9 +413,9 @@
 
   async function loadGallery() {
     try {
-      const q = query(collection(db, 'carvings'), where('sold', '==', false), orderBy('added', 'desc'));
+      const q = query(collection(db, 'carvings'), orderBy('added', 'desc'));
       const snap = await getDocs(q);
-      allCarvings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      allCarvings = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(c => !c.sold);
       buildCatRow();
       renderGrid();
     } catch(e) {
