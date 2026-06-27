@@ -36,14 +36,24 @@
     .gallery-count { font-size: 13px; color: var(--text3); margin-top: 4px; }
     .gallery-pickup { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
-    .controls-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-    .cat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .controls-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .filter-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .filter-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 6px; }
+    .cat-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .cat-pill { padding: 6px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all 0.12s; font-family: inherit; }
     .cat-pill:hover { border-color: var(--accent); color: var(--accent); }
     .cat-pill.active { background: var(--accent); color: white; border-color: transparent; }
+    .size-pill { padding: 5px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer; transition: all 0.12s; font-family: inherit; text-transform: uppercase; letter-spacing: 0.04em; }
+    .size-pill:hover { border-color: var(--accent); color: var(--accent); }
+    .size-pill.active { background: var(--accent); color: white; border-color: transparent; }
 
     .sort-select { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-family: inherit; color: var(--text2); cursor: pointer; }
     .sort-select:focus { outline: none; border-color: var(--accent); }
+
+    .card-size-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .size-tag-small { background: #e8f5ee; color: #2d6a4f; }
+    .size-tag-medium { background: #fef3e2; color: #854f0b; }
+    .size-tag-large { background: #fdf0f1; color: #9b2335; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
@@ -149,11 +159,22 @@
     </div>
   </div>
   <div class="controls-row">
-    <div class="cat-row" id="cat-row"></div>
+    <div class="filter-rows">
+      <div class="cat-row">
+        <span class="filter-label">Type</span>
+        <div id="cat-row"></div>
+      </div>
+      <div class="cat-row">
+        <span class="filter-label">Size</span>
+        <div id="size-row"></div>
+      </div>
+    </div>
     <select class="sort-select" id="sort-select" onchange="setSort(this.value)">
       <option value="newest">Newest first</option>
       <option value="price-asc">Price: low to high</option>
       <option value="price-desc">Price: high to low</option>
+      <option value="size-asc">Size: small to large</option>
+      <option value="size-desc">Size: large to small</option>
       <option value="name">Name A–Z</option>
     </select>
   </div>
@@ -191,9 +212,12 @@
   const db = getFirestore(app);
 
   const CATS = ['All','Log Bears','Standing Bears','Fish','Large Pieces','Frames','Misc'];
+  const SIZES = ['All','Small','Medium','Large'];
+  const SIZE_ORDER = { 'Small': 1, 'Medium': 2, 'Large': 3 };
   const EMOJI = { 'Log Bears':'🪵','Standing Bears':'🐻','Fish':'🐟','Large Pieces':'📦','Frames':'🖼️','Misc':'✨' };
   let allCarvings = [];
   let activeCat = 'All';
+  let activeSize = 'All';
   let activeSort = 'newest';
 
   // lightbox state
@@ -224,6 +248,15 @@
       if (cat !== 'All' && count === 0) return '';
       return `<button class="cat-pill ${activeCat === cat ? 'active' : ''}" onclick="setCat('${cat}')">${cat}${count > 0 ? ` <span style="opacity:.6;font-weight:400">${count}</span>` : ''}</button>`;
     }).join('');
+
+    const sizeRow = document.getElementById('size-row');
+    sizeRow.innerHTML = SIZES.map(size => {
+      const count = size === 'All'
+        ? allCarvings.length
+        : allCarvings.filter(c => c.size === size).length;
+      if (size !== 'All' && count === 0) return '';
+      return `<button class="size-pill ${activeSize === size ? 'active' : ''}" onclick="setSize('${size}')">${size}${count > 0 ? ` <span style="opacity:.6;font-weight:400">${count}</span>` : ''}</button>`;
+    }).join('');
   }
 
   function getSorted(arr) {
@@ -231,7 +264,9 @@
     if (activeSort === 'price-asc') return copy.sort((a,b) => a.price - b.price);
     if (activeSort === 'price-desc') return copy.sort((a,b) => b.price - a.price);
     if (activeSort === 'name') return copy.sort((a,b) => a.name.localeCompare(b.name));
-    return copy; // newest — already sorted by added desc from firebase
+    if (activeSort === 'size-asc') return copy.sort((a,b) => (SIZE_ORDER[a.size]||0) - (SIZE_ORDER[b.size]||0));
+    if (activeSort === 'size-desc') return copy.sort((a,b) => (SIZE_ORDER[b.size]||0) - (SIZE_ORDER[a.size]||0));
+    return copy;
   }
 
   function renderGrid() {
@@ -244,6 +279,10 @@
           const cats = Array.isArray(c.cats) ? c.cats : [c.cat];
           return cats.includes(activeCat);
         });
+
+    if (activeSize !== 'All') {
+      filtered = filtered.filter(c => c.size === activeSize);
+    }
 
     filtered = getSorted(filtered);
     countEl.textContent = filtered.length === 1 ? '1 piece available' : `${filtered.length} pieces available`;
@@ -279,7 +318,7 @@
             ${dots}
           </div>
           <div class="card-body">
-            <div class="card-cat">${cats.join(' · ')}</div>
+            <div class="card-cat">${cats.join(' · ')}${c.size ? ` <span class="card-size-tag size-tag-${c.size.toLowerCase()}">${c.size}</span>` : ''}</div>
             <div class="card-name">${c.name}</div>
             <div class="card-price">$${Number(c.price).toFixed(0)}</div>
           </div>
@@ -310,6 +349,7 @@
   };
 
   window.setCat = function(cat) { activeCat = cat; buildCatRow(); renderGrid(); };
+  window.setSize = function(size) { activeSize = size; buildCatRow(); renderGrid(); };
   window.setSort = function(val) { activeSort = val; renderGrid(); };
 
   // ── LIGHTBOX ─────────────────────────────────────────
