@@ -169,6 +169,10 @@
           <label>Name</label>
           <input type="text" id="f-name" placeholder="e.g. Cedar log bear">
         </div>
+        <div class="fg">
+          <label>Price ($)</label>
+          <input type="number" id="f-price" placeholder="150" min="0">
+        </div>
         <div class="fg full">
           <label>Categories (select all that apply)</label>
           <div class="cat-checks">
@@ -181,19 +185,59 @@
           </div>
         </div>
         <div class="fg">
-          <label>Price ($)</label>
-          <input type="number" id="f-price" placeholder="150" min="0">
+          <label>Blocking Out</label>
+          <select id="f-blocking">
+            <option value="">— select —</option>
+            <option>Rob</option>
+            <option>Kellie</option>
+            <option>Josh</option>
+            <option>Andrew</option>
+            <option>Adam</option>
+          </select>
         </div>
-        <div class="fg photo-section">
+        <div class="fg">
+          <label>Hairing / Detail</label>
+          <select id="f-hairing">
+            <option value="">— select —</option>
+            <option>Rob</option>
+            <option>Kellie</option>
+            <option>Josh</option>
+            <option>Andrew</option>
+            <option>Adam</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Finishing</label>
+          <select id="f-finishing">
+            <option value="">— select —</option>
+            <option>Rob</option>
+            <option>Kellie</option>
+            <option>Josh</option>
+            <option>Andrew</option>
+            <option>Adam</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Selling</label>
+          <select id="f-selling">
+            <option value="">— select —</option>
+            <option>Rob</option>
+            <option>Kellie</option>
+            <option>Josh</option>
+            <option>Andrew</option>
+            <option>Adam</option>
+          </select>
+        </div>
+        <div class="fg full">
+          <label>Notes</label>
+          <input type="text" id="f-notes" placeholder="Any notes about this piece">
+        </div>
+        <div class="fg photo-section full">
           <label>Photos (up to 5)</label>
           <div class="photo-actions">
             <label class="btn-photo-add">
-              📷 Camera
-              <input type="file" id="f-photo-camera" accept="image/*" capture="environment" onchange="onPhotosSelected(this)">
-            </label>
-            <label class="btn-photo-add">
-              🖼️ Gallery
-              <input type="file" id="f-photo-gallery" accept="image/*" multiple onchange="onPhotosSelected(this)">
+              📷 Add photo
+              <input type="file" id="f-photo-input" accept="image/*" multiple onchange="onPhotosSelected(this)">
             </label>
             <span class="photo-count" id="photo-count"></span>
           </div>
@@ -307,10 +351,17 @@
   };
 
   // ── ADD ───────────────────────────────────────────────
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxvHMZFuBfzctZfXX7kZrGzENA5Dvet1z4pDusORWSx3gevz9KBi98rPJdCiAL14knV/exec';
+
   window.addCarving = async function() {
     const name = document.getElementById('f-name').value.trim();
     const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
     const price = parseFloat(document.getElementById('f-price').value);
+    const blockingOut = document.getElementById('f-blocking').value;
+    const hairingDetail = document.getElementById('f-hairing').value;
+    const finishing = document.getElementById('f-finishing').value;
+    const selling = document.getElementById('f-selling').value;
+    const notes = document.getElementById('f-notes').value.trim();
     const statusEl = document.getElementById('post-status');
     const btn = document.getElementById('btn-post');
     const prog = document.getElementById('upload-progress');
@@ -343,11 +394,39 @@
     prog.style.display = 'none';
 
     try {
+      // Save to Firebase
       await addDoc(collection(db, 'carvings'), {
-        name, cats, cat: cats[0], price, photoURLs, photoURL: photoURLs[0] || null, sold: false, added: Date.now()
+        name, cats, cat: cats[0], price, notes,
+        blockingOut, hairingDetail, finishing, selling,
+        photoURLs, photoURL: photoURLs[0] || null,
+        sold: false, added: Date.now()
       });
+
+      // Post to Google Sheets
+      try {
+        prog.style.display = '';
+        prog.textContent = 'Saving to spreadsheet…';
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, price, notes, blockingOut, hairingDetail, finishing, selling })
+        });
+        prog.style.display = 'none';
+      } catch(e) {
+        prog.style.display = 'none';
+        // Sheet sync failed but Firebase saved — don't block the user
+        console.warn('Sheet sync failed:', e);
+      }
+
+      // Reset form
       document.getElementById('f-name').value = '';
       document.getElementById('f-price').value = '';
+      document.getElementById('f-notes').value = '';
+      document.getElementById('f-blocking').value = '';
+      document.getElementById('f-hairing').value = '';
+      document.getElementById('f-finishing').value = '';
+      document.getElementById('f-selling').value = '';
       document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
       selectedFiles = [];
       renderPhotoPreviews();
