@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rob's Creative Carvings — Handcrafted Pacific Northwest Art</title>
+  <meta name="description" content="Handcrafted chainsaw carvings from Pe Ell, Washington. Bears, fish, eagles and more. Local pickup. Call (360) 880-2630.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f4ef;
+      --surface: #ffffff;
+      --border: #e4dfd7;
+      --text: #1c1a17;
+      --text2: #6b6258;
+      --text3: #a09890;
+      --accent: #5c4a2a;
+      --accent-light: #f5ede0;
+      --radius: 4px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo { text-decoration: none; color: inherit; }
+    .logo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+    .logo-sub {
+      font-size: 12px;
+      color: var(--text3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .header-contact {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .header-phone {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .header-phone:hover { text-decoration: underline; }
+    .header-location {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      padding: 56px 24px 52px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 14px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .hero-body {
+      font-size: 16px;
+      opacity: 0.8;
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .hero-cta:hover { opacity: 0.9; }
+
+    /* ── PICKUP BANNER ── */
+    .pickup-bar {
+      background: var(--accent-light);
+      border-bottom: 1px solid #e2d5c0;
+      padding: 12px 24px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--accent);
+    }
+    .pickup-bar strong { font-weight: 500; }
+
+    /* ── GALLERY ── */
+    .gallery-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    .gallery-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .gallery-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 600;
+    }
+    .gallery-count {
+      font-size: 13px;
+      color: var(--text3);
+    }
+
+    /* Category filter */
+    .cat-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .cat-pill {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.12s;
+      font-family: inherit;
+    }
+    .cat-pill:hover { border-color: var(--accent); color: var(--accent); }
+    .cat-pill.active {
+      background: var(--accent);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s;
+      cursor: default;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
+    }
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .card:hover .card-img { transform: scale(1.03); }
+    .card-placeholder {
+      font-size: 48px;
+      opacity: 0.3;
+    }
+    .card-body { padding: 14px 16px 16px; }
+    .card-cat {
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .card-price {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .card-pickup {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--text3);
+      grid-column: 1 / -1;
+    }
+    .empty-state p { font-size: 15px; line-height: 1.6; }
+    .empty-state a { color: var(--accent); }
+
+    .loading-state {
+      text-align: center;
+      padding: 64px 20px;
+      color: var(--text3);
+      grid-column: 1 / -1;
+      font-size: 15px;
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 56px 24px;
+    }
+    .about-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .about-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 12px;
+    }
+    .about-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .about-body {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+    .about-contact {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-light);
+      border: 1px solid #e2d5c0;
+      border-radius: 10px;
+      padding: 20px 32px;
+    }
+    .about-contact-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+    .about-contact-phone { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent); text-decoration: none; }
+    .about-contact-phone:hover { text-decoration: underline; }
+    .about-contact-note { font-size: 13px; color: var(--text2); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--accent);
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+    }
+    footer a { color: rgba(255,255,255,0.8); }
+
+    @media (max-width: 600px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .header-contact { align-items: flex-start; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <div class="logo-title">Rob's Creative Carvings</div>
+      <div class="logo-sub">Pe Ell, Washington</div>
+    </a>
+    <div class="header-contact">
+      <a href="tel:3608802630" class="header-phone">(360) 880-2630</a>
+      <div class="header-location">Local pickup · Pacific Northwest</div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Handcrafted in Washington State</div>
+  <h1 class="hero-title">Pacific Northwest<br>Chainsaw Art</h1>
+  <p class="hero-body">Every piece carved by hand from cedar and fir. Bears, fish, eagles, and more — each one unique.</p>
+  <a href="#gallery" class="hero-cta">Browse available pieces ↓</a>
+</section>
+
+<div class="pickup-bar">
+  <strong>Local pickup only</strong> — See something you like? Call or text <strong>(360) 880-2630</strong> to confirm it's available before making the trip.
+</div>
+
+<section class="gallery-wrap" id="gallery">
+  <div class="gallery-header">
+    <div>
+      <h2 class="gallery-heading">Available now</h2>
+      <div class="gallery-count" id="gallery-count"></div>
+    </div>
+  </div>
+  <div class="cat-row" id="cat-row"></div>
+  <div class="grid" id="gallery-grid">
+    <div class="loading-state">Loading pieces…</div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="about-inner">
+    <div class="about-eyebrow">About</div>
+    <h2 class="about-title">Made by hand, one piece at a time</h2>
+    <p class="about-body">
+      Rob's Creative Carvings is a family operation out of Pe Ell, Washington. Every carving is made by hand using a chainsaw, shaped from local cedar and fir. No two pieces are alike. We carve bears, fish, frames, and large statement pieces — built to last outdoors or in.
+    </p>
+    <div class="about-contact">
+      <div class="about-contact-label">Call or text to pick up</div>
+      <a href="tel:3608802630" class="about-contact-phone">(360) 880-2630</a>
+      <div class="about-contact-note">Pe Ell, WA · Local pickup only</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Rob's Creative Carvings · Pe Ell, Washington · <a href="tel:3608802630">(360) 880-2630</a></p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDhm53zF1b4mJ8Jwx7FFHlpObeMiKzud4g",
+    authDomain: "robs-creative-carvings.firebaseapp.com",
+    projectId: "robs-creative-carvings",
+    storageBucket: "robs-creative-carvings.firebasestorage.app",
+    messagingSenderId: "61101796590",
+    appId: "1:61101796590:web:8a2ccf49104a4bf36717ff"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const CATS = ['All','Log Bears','Standing Bears','Fish','Large Pieces','Frames','Misc'];
+  const EMOJI = { 'Log Bears':'🪵','Standing Bears':'🐻','Fish':'🐟','Large Pieces':'📦','Frames':'🖼️','Misc':'✨' };
+  let allCarvings = [];
+  let activeCat = 'All';
+
+  async function loadGallery() {
+    try {
+      const q = query(collection(db, 'carvings'), where('sold', '==', false), orderBy('added', 'desc'));
+      const snap = await getDocs(q);
+      allCarvings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      buildCatRow();
+      renderGrid();
+    } catch(e) {
+      document.getElementById('gallery-grid').innerHTML = `
+        <div class="empty-state"><p>Couldn't load listings right now.<br>Call us at <a href="tel:3608802630">(360) 880-2630</a> to ask what's available.</p></div>`;
+    }
+  }
+
+  function buildCatRow() {
+    const row = document.getElementById('cat-row');
+    row.innerHTML = CATS.map(cat => {
+      const count = cat === 'All' ? allCarvings.length : allCarvings.filter(c => c.cat === cat).length;
+      if (cat !== 'All' && count === 0) return '';
+      return `<button class="cat-pill ${activeCat === cat ? 'active' : ''}" onclick="setCat('${cat}')">${cat}${count > 0 ? ` <span style="opacity:.6;font-weight:400">${count}</span>` : ''}</button>`;
+    }).join('');
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('gallery-grid');
+    const countEl = document.getElementById('gallery-count');
+    const filtered = activeCat === 'All' ? allCarvings : allCarvings.filter(c => c.cat === activeCat);
+
+    countEl.textContent = filtered.length === 1 ? '1 piece available' : `${filtered.length} pieces available`;
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty-state"><p>Nothing available in this category right now.<br>Check back soon or call <a href="tel:3608802630">(360) 880-2630</a>.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(c => `
+      <div class="card">
+        <div class="card-img-wrap">
+          ${c.photoURL
+            ? `<img class="card-img" src="${c.photoURL}" alt="${c.name}" loading="lazy">`
+            : `<div class="card-placeholder">${EMOJI[c.cat] || '🪵'}</div>`}
+        </div>
+        <div class="card-body">
+          <div class="card-cat">${c.cat}</div>
+          <div class="card-name">${c.name}</div>
+          <div class="card-price">$${Number(c.price).toFixed(0)}</div>
+          <div class="card-pickup">Local pickup · call to confirm</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.setCat = function(cat) {
+    activeCat = cat;
+    buildCatRow();
+    renderGrid();
+  };
+
+  loadGallery();
+</script>
+</body>
+</html>
