@@ -103,6 +103,10 @@
     .btn-del:hover { background: var(--red); color: white; }
     .sold-pill { display: inline-block; font-size: 10px; font-weight: 600; background: var(--green-bg); color: var(--green); padding: 2px 7px; border-radius: 999px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
     .photo-badge { font-size: 10px; color: var(--text3); margin-left: 4px; }
+    .size-badge { font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .size-small { background: #e8f5ee; color: #2d6a4f; }
+    .size-medium { background: #fef3e2; color: #854f0b; }
+    .size-large { background: #fdf0f1; color: #9b2335; }
 
     .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.6; }
     .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
@@ -172,6 +176,15 @@
         <div class="fg">
           <label>Price ($)</label>
           <input type="number" id="f-price" placeholder="150" min="0">
+        </div>
+        <div class="fg">
+          <label>Size</label>
+          <select id="f-size">
+            <option value="">— select —</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+          </select>
         </div>
         <div class="fg full">
           <label>Categories (select all that apply)</label>
@@ -357,6 +370,7 @@
     const name = document.getElementById('f-name').value.trim();
     const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
     const price = parseFloat(document.getElementById('f-price').value);
+    const size = document.getElementById('f-size').value;
     const blockingOut = document.getElementById('f-blocking').value;
     const hairingDetail = document.getElementById('f-hairing').value;
     const finishing = document.getElementById('f-finishing').value;
@@ -396,7 +410,7 @@
     try {
       // Save to Firebase
       await addDoc(collection(db, 'carvings'), {
-        name, cats, cat: cats[0], price, notes,
+        name, cats, cat: cats[0], price, size, notes,
         blockingOut, hairingDetail, finishing, selling,
         photoURLs, photoURL: photoURLs[0] || null,
         sold: false, added: Date.now()
@@ -422,6 +436,7 @@
       // Reset form
       document.getElementById('f-name').value = '';
       document.getElementById('f-price').value = '';
+      document.getElementById('f-size').value = '';
       document.getElementById('f-notes').value = '';
       document.getElementById('f-blocking').value = '';
       document.getElementById('f-hairing').value = '';
@@ -485,7 +500,7 @@
               <button class="btn-save-name" onclick="saveName('${c.id}')">Save</button>
               <button class="btn-cancel-name" onclick="cancelEdit('${c.id}')">Cancel</button>
             </div>
-            <div class="li-meta">${Array.isArray(c.cats) ? c.cats.join(', ') : c.cat}</div>
+            <div class="li-meta">${Array.isArray(c.cats) ? c.cats.join(', ') : c.cat}${c.size ? ` · <span class="size-badge size-${c.size.toLowerCase()}">${c.size}</span>` : ''}</div>
             <div class="li-price">$${Number(c.price).toFixed(0)}</div>
           </div>
           <div class="li-actions">
