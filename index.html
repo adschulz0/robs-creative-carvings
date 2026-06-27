@@ -27,10 +27,12 @@
     .header-phone:hover { text-decoration: underline; }
     .header-location { font-size: 12px; color: var(--text3); }
 
-    .hero { background: var(--accent); color: white; text-align: center; padding: 56px 24px 52px; }
-    .hero-eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.65; margin-bottom: 14px; }
-    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 6vw, 52px); font-weight: 600; line-height: 1.15; margin-bottom: 16px; }
-    .hero-body { font-size: 16px; opacity: 0.8; max-width: 480px; margin: 0 auto 28px; line-height: 1.6; }
+    .hero { position: relative; color: white; text-align: center; padding: 80px 24px 72px; background-image: url('/images/Eagle.jpg'); background-size: cover; background-position: center; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: rgba(30, 20, 10, 0.55); }
+    .hero > * { position: relative; z-index: 1; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; margin-bottom: 14px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 6vw, 52px); font-weight: 600; line-height: 1.15; margin-bottom: 16px; text-shadow: 0 2px 12px rgba(0,0,0,0.4); }
+    .hero-body { font-size: 16px; opacity: 0.85; max-width: 480px; margin: 0 auto 28px; line-height: 1.6; }
     .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--accent); text-decoration: none; padding: 12px 24px; border-radius: var(--radius); font-size: 15px; font-weight: 500; transition: opacity 0.15s; }
     .hero-cta:hover { opacity: 0.9; }
 
@@ -41,6 +43,7 @@
     .gallery-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
     .gallery-heading { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; }
     .gallery-count { font-size: 13px; color: var(--text3); }
+    .gallery-pickup { font-size: 13px; color: var(--text2); margin-top: 4px; }
 
     .cat-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
     .cat-pill { padding: 6px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all 0.12s; font-family: inherit; }
@@ -87,17 +90,6 @@
     .empty-state a { color: var(--accent); }
     .loading-state { text-align: center; padding: 64px 20px; color: var(--text3); grid-column: 1 / -1; font-size: 15px; }
 
-    .about { background: var(--surface); border-top: 1px solid var(--border); padding: 56px 24px; }
-    .about-inner { max-width: 600px; margin: 0 auto; text-align: center; }
-    .about-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
-    .about-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
-    .about-body { font-size: 15px; color: var(--text2); line-height: 1.75; margin-bottom: 28px; }
-    .about-contact { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: var(--accent-light); border: 1px solid #e2d5c0; border-radius: 10px; padding: 20px 32px; }
-    .about-contact-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
-    .about-contact-phone { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent); text-decoration: none; }
-    .about-contact-phone:hover { text-decoration: underline; }
-    .about-contact-note { font-size: 13px; color: var(--text2); }
-
     footer { background: var(--accent); color: rgba(255,255,255,0.65); text-align: center; padding: 24px; font-size: 13px; }
     footer a { color: rgba(255,255,255,0.8); }
 
@@ -139,24 +131,12 @@
     <div>
       <h2 class="gallery-heading">Available now</h2>
       <div class="gallery-count" id="gallery-count"></div>
+      <div class="gallery-pickup">Local pickup only · call or text <a href="tel:3608802630" style="color:var(--accent);text-decoration:none;">(360) 880-2630</a> to confirm before making the trip</div>
     </div>
   </div>
   <div class="cat-row" id="cat-row"></div>
   <div class="grid" id="gallery-grid">
     <div class="loading-state">Loading pieces…</div>
-  </div>
-</section>
-
-<section class="about">
-  <div class="about-inner">
-    <div class="about-eyebrow">About</div>
-    <h2 class="about-title">Made by hand, one piece at a time</h2>
-    <p class="about-body">Rob's Creative Carvings is a family operation out of Pe Ell, Washington. Every carving is made by hand using a chainsaw, shaped from local cedar and fir. No two pieces are alike. We carve bears, fish, frames, and large statement pieces — built to last outdoors or in.</p>
-    <div class="about-contact">
-      <div class="about-contact-label">Call or text to pick up</div>
-      <a href="tel:3608802630" class="about-contact-phone">(360) 880-2630</a>
-      <div class="about-contact-note">Pe Ell, WA · Local pickup only</div>
-    </div>
   </div>
 </section>
 
@@ -246,7 +226,6 @@
             <div class="card-cat">${c.cat}</div>
             <div class="card-name">${c.name}</div>
             <div class="card-price">$${Number(c.price).toFixed(0)}</div>
-            <div class="card-pickup">Local pickup · call to confirm</div>
           </div>
         </div>
       `;
