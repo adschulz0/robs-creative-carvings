@@ -9,320 +9,97 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #f7f4ef;
-      --surface: #ffffff;
-      --border: #e4dfd7;
-      --text: #1c1a17;
-      --text2: #6b6258;
-      --text3: #a09890;
-      --accent: #5c4a2a;
-      --accent-light: #f5ede0;
-      --radius: 4px;
+      --bg: #f7f4ef; --surface: #ffffff; --border: #e4dfd7;
+      --text: #1c1a17; --text2: #6b6258; --text3: #a09890;
+      --accent: #5c4a2a; --accent-light: #f5ede0; --radius: 4px;
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── HEADER ── */
-    header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-    }
-    .header-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 0;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 16px; flex-wrap: wrap; }
     .logo { text-decoration: none; color: inherit; }
-    .logo-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--accent);
-      line-height: 1.2;
-    }
-    .logo-sub {
-      font-size: 12px;
-      color: var(--text3);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    .header-contact {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 2px;
-    }
-    .header-phone {
-      font-size: 17px;
-      font-weight: 500;
-      color: var(--accent);
-      text-decoration: none;
-    }
+    .logo-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1.2; }
+    .logo-sub { font-size: 12px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+    .header-contact { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .header-phone { font-size: 17px; font-weight: 500; color: var(--accent); text-decoration: none; }
     .header-phone:hover { text-decoration: underline; }
-    .header-location {
-      font-size: 12px;
-      color: var(--text3);
-    }
+    .header-location { font-size: 12px; color: var(--text3); }
 
-    /* ── HERO ── */
-    .hero {
-      background: var(--accent);
-      color: white;
-      text-align: center;
-      padding: 56px 24px 52px;
-    }
-    .hero-eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      opacity: 0.65;
-      margin-bottom: 14px;
-    }
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(32px, 6vw, 52px);
-      font-weight: 600;
-      line-height: 1.15;
-      margin-bottom: 16px;
-    }
-    .hero-body {
-      font-size: 16px;
-      opacity: 0.8;
-      max-width: 480px;
-      margin: 0 auto 28px;
-      line-height: 1.6;
-    }
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: white;
-      color: var(--accent);
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: var(--radius);
-      font-size: 15px;
-      font-weight: 500;
-      transition: opacity 0.15s;
-    }
+    .hero { background: var(--accent); color: white; text-align: center; padding: 56px 24px 52px; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.65; margin-bottom: 14px; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 6vw, 52px); font-weight: 600; line-height: 1.15; margin-bottom: 16px; }
+    .hero-body { font-size: 16px; opacity: 0.8; max-width: 480px; margin: 0 auto 28px; line-height: 1.6; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--accent); text-decoration: none; padding: 12px 24px; border-radius: var(--radius); font-size: 15px; font-weight: 500; transition: opacity 0.15s; }
     .hero-cta:hover { opacity: 0.9; }
 
-    /* ── PICKUP BANNER ── */
-    .pickup-bar {
-      background: var(--accent-light);
-      border-bottom: 1px solid #e2d5c0;
-      padding: 12px 24px;
-      text-align: center;
-      font-size: 14px;
-      color: var(--accent);
-    }
+    .pickup-bar { background: var(--accent-light); border-bottom: 1px solid #e2d5c0; padding: 12px 24px; text-align: center; font-size: 14px; color: var(--accent); }
     .pickup-bar strong { font-weight: 500; }
 
-    /* ── GALLERY ── */
-    .gallery-wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 40px 20px 60px;
-    }
+    .gallery-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 20px 60px; }
+    .gallery-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .gallery-heading { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 600; }
+    .gallery-count { font-size: 13px; color: var(--text3); }
 
-    .gallery-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .gallery-heading {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      font-weight: 600;
-    }
-    .gallery-count {
-      font-size: 13px;
-      color: var(--text3);
-    }
-
-    /* Category filter */
-    .cat-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-    }
-    .cat-pill {
-      padding: 6px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-      cursor: pointer;
-      transition: all 0.12s;
-      font-family: inherit;
-    }
+    .cat-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .cat-pill { padding: 6px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; transition: all 0.12s; font-family: inherit; }
     .cat-pill:hover { border-color: var(--accent); color: var(--accent); }
-    .cat-pill.active {
-      background: var(--accent);
-      color: white;
-      border-color: transparent;
-    }
+    .cat-pill.active { background: var(--accent); color: white; border-color: transparent; }
 
-    /* Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 20px;
-    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.18s, box-shadow 0.18s;
-      cursor: default;
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: transform 0.18s, box-shadow 0.18s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+
+    /* CAROUSEL */
+    .carousel { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: var(--bg); }
+    .carousel-track { display: flex; height: 100%; transition: transform 0.3s ease; }
+    .carousel-slide { min-width: 100%; height: 100%; flex-shrink: 0; }
+    .carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+    .card:hover .carousel-slide img { transform: scale(1.03); }
+    .carousel-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: 0.3; }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.85); border: none; border-radius: 50%;
+      width: 30px; height: 30px; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s; z-index: 2;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
     }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
-    }
-    .card-img-wrap {
-      width: 100%;
-      aspect-ratio: 1;
-      overflow: hidden;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    .card:hover .card-img { transform: scale(1.03); }
-    .card-placeholder {
-      font-size: 48px;
-      opacity: 0.3;
-    }
+    .carousel:hover .carousel-btn { opacity: 1; }
+    .carousel-btn.prev { left: 6px; }
+    .carousel-btn.next { right: 6px; }
+    .carousel-btn:hover { background: white; }
+
+    .carousel-dots { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; }
+    .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: background 0.2s; }
+    .carousel-dot.active { background: white; }
+
     .card-body { padding: 14px 16px 16px; }
-    .card-cat {
-      font-size: 10px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text3);
-      margin-bottom: 4px;
-    }
-    .card-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 17px;
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-    .card-price {
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--accent);
-    }
-    .card-pickup {
-      font-size: 11px;
-      color: var(--text3);
-      margin-top: 6px;
-    }
+    .card-cat { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 4px; }
+    .card-name { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 400; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+    .card-price { font-size: 18px; font-weight: 500; color: var(--accent); }
+    .card-pickup { font-size: 11px; color: var(--text3); margin-top: 6px; }
 
-    .empty-state {
-      text-align: center;
-      padding: 64px 20px;
-      color: var(--text3);
-      grid-column: 1 / -1;
-    }
+    .empty-state { text-align: center; padding: 64px 20px; color: var(--text3); grid-column: 1 / -1; }
     .empty-state p { font-size: 15px; line-height: 1.6; }
     .empty-state a { color: var(--accent); }
+    .loading-state { text-align: center; padding: 64px 20px; color: var(--text3); grid-column: 1 / -1; font-size: 15px; }
 
-    .loading-state {
-      text-align: center;
-      padding: 64px 20px;
-      color: var(--text3);
-      grid-column: 1 / -1;
-      font-size: 15px;
-    }
-
-    /* ── ABOUT ── */
-    .about {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 56px 24px;
-    }
-    .about-inner {
-      max-width: 600px;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .about-eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text3);
-      margin-bottom: 12px;
-    }
-    .about-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 16px;
-    }
-    .about-body {
-      font-size: 15px;
-      color: var(--text2);
-      line-height: 1.75;
-      margin-bottom: 28px;
-    }
-    .about-contact {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      background: var(--accent-light);
-      border: 1px solid #e2d5c0;
-      border-radius: 10px;
-      padding: 20px 32px;
-    }
+    .about { background: var(--surface); border-top: 1px solid var(--border); padding: 56px 24px; }
+    .about-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .about-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .about-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
+    .about-body { font-size: 15px; color: var(--text2); line-height: 1.75; margin-bottom: 28px; }
+    .about-contact { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: var(--accent-light); border: 1px solid #e2d5c0; border-radius: 10px; padding: 20px 32px; }
     .about-contact-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
     .about-contact-phone { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--accent); text-decoration: none; }
     .about-contact-phone:hover { text-decoration: underline; }
     .about-contact-note { font-size: 13px; color: var(--text2); }
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--accent);
-      color: rgba(255,255,255,0.65);
-      text-align: center;
-      padding: 24px;
-      font-size: 13px;
-    }
+    footer { background: var(--accent); color: rgba(255,255,255,0.65); text-align: center; padding: 24px; font-size: 13px; }
     footer a { color: rgba(255,255,255,0.8); }
 
     @media (max-width: 600px) {
@@ -375,9 +152,7 @@
   <div class="about-inner">
     <div class="about-eyebrow">About</div>
     <h2 class="about-title">Made by hand, one piece at a time</h2>
-    <p class="about-body">
-      Rob's Creative Carvings is a family operation out of Pe Ell, Washington. Every carving is made by hand using a chainsaw, shaped from local cedar and fir. No two pieces are alike. We carve bears, fish, frames, and large statement pieces — built to last outdoors or in.
-    </p>
+    <p class="about-body">Rob's Creative Carvings is a family operation out of Pe Ell, Washington. Every carving is made by hand using a chainsaw, shaped from local cedar and fir. No two pieces are alike. We carve bears, fish, frames, and large statement pieces — built to last outdoors or in.</p>
     <div class="about-contact">
       <div class="about-contact-label">Call or text to pick up</div>
       <a href="tel:3608802630" class="about-contact-phone">(360) 880-2630</a>
@@ -392,7 +167,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDhm53zF1b4mJ8Jwx7FFHlpObeMiKzud4g",
@@ -419,8 +194,7 @@
       buildCatRow();
       renderGrid();
     } catch(e) {
-      document.getElementById('gallery-grid').innerHTML = `
-        <div class="empty-state"><p>Couldn't load listings right now.<br>Call us at <a href="tel:3608802630">(360) 880-2630</a> to ask what's available.</p></div>`;
+      document.getElementById('gallery-grid').innerHTML = `<div class="empty-state"><p>Couldn't load listings right now.<br>Call us at <a href="tel:3608802630">(360) 880-2630</a> to ask what's available.</p></div>`;
     }
   }
 
@@ -445,22 +219,60 @@
       return;
     }
 
-    grid.innerHTML = filtered.map(c => `
-      <div class="card">
-        <div class="card-img-wrap">
-          ${c.photoURL
-            ? `<img class="card-img" src="${c.photoURL}" alt="${c.name}" loading="lazy">`
-            : `<div class="card-placeholder">${EMOJI[c.cat] || '🪵'}</div>`}
+    grid.innerHTML = filtered.map((c, cardIndex) => {
+      const photos = c.photoURLs || (c.photoURL ? [c.photoURL] : []);
+      const hasMultiple = photos.length > 1;
+
+      const slides = photos.length > 0
+        ? photos.map(url => `<div class="carousel-slide"><img src="${url}" alt="${c.name}" loading="lazy"></div>`).join('')
+        : `<div class="carousel-slide"><div class="carousel-placeholder">${EMOJI[c.cat] || '🪵'}</div></div>`;
+
+      const dots = hasMultiple
+        ? `<div class="carousel-dots">${photos.map((_, i) => `<div class="carousel-dot ${i===0?'active':''}" id="dot-${cardIndex}-${i}"></div>`).join('')}</div>`
+        : '';
+
+      const btns = hasMultiple ? `
+        <button class="carousel-btn prev" onclick="slideCarousel(${cardIndex}, -1)">‹</button>
+        <button class="carousel-btn next" onclick="slideCarousel(${cardIndex}, 1)">›</button>
+      ` : '';
+
+      return `
+        <div class="card">
+          <div class="carousel" id="carousel-${cardIndex}">
+            <div class="carousel-track" id="track-${cardIndex}">${slides}</div>
+            ${btns}
+            ${dots}
+          </div>
+          <div class="card-body">
+            <div class="card-cat">${c.cat}</div>
+            <div class="card-name">${c.name}</div>
+            <div class="card-price">$${Number(c.price).toFixed(0)}</div>
+            <div class="card-pickup">Local pickup · call to confirm</div>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="card-cat">${c.cat}</div>
-          <div class="card-name">${c.name}</div>
-          <div class="card-price">$${Number(c.price).toFixed(0)}</div>
-          <div class="card-pickup">Local pickup · call to confirm</div>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+
+    // Store slide state
+    window._carouselState = {};
+    filtered.forEach((c, i) => {
+      const photos = c.photoURLs || (c.photoURL ? [c.photoURL] : []);
+      window._carouselState[i] = { current: 0, total: photos.length };
+    });
   }
+
+  window.slideCarousel = function(cardIndex, dir) {
+    const state = window._carouselState[cardIndex];
+    if (!state || state.total <= 1) return;
+    state.current = (state.current + dir + state.total) % state.total;
+    const track = document.getElementById(`track-${cardIndex}`);
+    if (track) track.style.transform = `translateX(-${state.current * 100}%)`;
+    // update dots
+    for (let i = 0; i < state.total; i++) {
+      const dot = document.getElementById(`dot-${cardIndex}-${i}`);
+      if (dot) dot.classList.toggle('active', i === state.current);
+    }
+  };
 
   window.setCat = function(cat) {
     activeCat = cat;
