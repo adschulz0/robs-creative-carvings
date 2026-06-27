@@ -107,6 +107,10 @@
     .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.6; }
     .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
 
+    .cat-checks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+    .cat-check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all 0.12s; }
+    .cat-check input { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+
     @media (max-width: 400px) {
       .form-grid { grid-template-columns: 1fr; }
       .fg.full { grid-column: 1; }
@@ -154,16 +158,16 @@
           <label>Name</label>
           <input type="text" id="f-name" placeholder="e.g. Cedar log bear">
         </div>
-        <div class="fg">
-          <label>Category</label>
-          <select id="f-cat">
-            <option value="Log Bears">Log Bears</option>
-            <option value="Standing Bears">Standing Bears</option>
-            <option value="Fish">Fish</option>
-            <option value="Large Pieces">Large Pieces</option>
-            <option value="Frames">Frames</option>
-            <option value="Misc">Misc</option>
-          </select>
+        <div class="fg full">
+          <label>Categories (select all that apply)</label>
+          <div class="cat-checks">
+            <label class="cat-check"><input type="checkbox" name="cat" value="Log Bears"> Log Bears</label>
+            <label class="cat-check"><input type="checkbox" name="cat" value="Standing Bears"> Standing Bears</label>
+            <label class="cat-check"><input type="checkbox" name="cat" value="Fish"> Fish</label>
+            <label class="cat-check"><input type="checkbox" name="cat" value="Large Pieces"> Large Pieces</label>
+            <label class="cat-check"><input type="checkbox" name="cat" value="Frames"> Frames</label>
+            <label class="cat-check"><input type="checkbox" name="cat" value="Misc"> Misc</label>
+          </div>
         </div>
         <div class="fg">
           <label>Price ($)</label>
@@ -173,8 +177,12 @@
           <label>Photos (up to 5)</label>
           <div class="photo-actions">
             <label class="btn-photo-add">
-              📷 Add photo
-              <input type="file" id="f-photo-input" accept="image/*" multiple onchange="onPhotosSelected(this)">
+              📷 Camera
+              <input type="file" id="f-photo-camera" accept="image/*" capture="environment" onchange="onPhotosSelected(this)">
+            </label>
+            <label class="btn-photo-add">
+              🖼️ Gallery
+              <input type="file" id="f-photo-gallery" accept="image/*" multiple onchange="onPhotosSelected(this)">
             </label>
             <span class="photo-count" id="photo-count"></span>
           </div>
@@ -260,11 +268,6 @@
     });
     input.value = '';
     renderPhotoPreviews();
-    const countEl = document.getElementById('photo-count');
-    if (selectedFiles.length >= 5) {
-      document.getElementById('f-photo-input').disabled = true;
-      countEl.textContent = '5/5 — max reached';
-    }
   };
 
   function renderPhotoPreviews() {
@@ -295,7 +298,7 @@
   // ── ADD ───────────────────────────────────────────────
   window.addCarving = async function() {
     const name = document.getElementById('f-name').value.trim();
-    const cat = document.getElementById('f-cat').value;
+    const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
     const price = parseFloat(document.getElementById('f-price').value);
     const statusEl = document.getElementById('post-status');
     const btn = document.getElementById('btn-post');
@@ -303,6 +306,7 @@
 
     statusEl.className = 'post-status';
     if (!name) { statusEl.textContent = 'Add a name.'; statusEl.className = 'post-status err'; return; }
+    if (!cats.length) { statusEl.textContent = 'Select at least one category.'; statusEl.className = 'post-status err'; return; }
     if (isNaN(price) || price < 0) { statusEl.textContent = 'Add a valid price.'; statusEl.className = 'post-status err'; return; }
 
     btn.disabled = true;
@@ -329,14 +333,11 @@
 
     try {
       await addDoc(collection(db, 'carvings'), {
-        name, cat, price,
-        photoURLs,
-        photoURL: photoURLs[0] || null,
-        sold: false,
-        added: Date.now()
+        name, cats, cat: cats[0], price, photoURLs, photoURL: photoURLs[0] || null, sold: false, added: Date.now()
       });
       document.getElementById('f-name').value = '';
       document.getElementById('f-price').value = '';
+      document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
       selectedFiles = [];
       renderPhotoPreviews();
       statusEl.textContent = 'Posted!';
@@ -386,7 +387,7 @@
           </div>
           <div class="li-info">
             <div class="li-name">${c.name}${c.sold ? '<span class="sold-pill">Sold</span>' : ''}${photoCount > 1 ? `<span class="photo-badge">📷 ${photoCount}</span>` : ''}</div>
-            <div class="li-meta">${c.cat}</div>
+            <div class="li-meta">${Array.isArray(c.cats) ? c.cats.join(', ') : c.cat}</div>
             <div class="li-price">$${Number(c.price).toFixed(0)}</div>
           </div>
           <div class="li-actions">
