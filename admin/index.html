@@ -19,7 +19,6 @@
       --text3: #9c9790;
       --accent: #5c4a2a;
       --accent-bg: #f5efe6;
-      --accent-text: #5c4a2a;
       --green: #2d6a4f;
       --green-bg: #e8f5ee;
       --red: #9b2335;
@@ -51,7 +50,9 @@
     }
     .topbar-title { font-size: 16px; font-weight: 600; }
     .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
-    .btn-lock {
+    .topbar-user { display: flex; align-items: center; gap: 10px; }
+    .user-email { font-size: 12px; color: var(--text2); }
+    .btn-signout {
       background: none;
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -61,49 +62,45 @@
       cursor: pointer;
       font-family: inherit;
     }
-    .btn-lock:hover { background: var(--surface2); }
+    .btn-signout:hover { background: var(--surface2); }
 
     .content { padding: 20px 16px; max-width: 600px; margin: 0 auto; }
 
-    /* PASSWORD */
-    .pw-screen {
+    /* LOGIN SCREEN */
+    .login-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 80vh;
-      gap: 12px;
+      min-height: 100vh;
+      gap: 16px;
       text-align: center;
       padding: 20px;
     }
-    .pw-icon { font-size: 40px; margin-bottom: 4px; }
-    .pw-title { font-size: 20px; font-weight: 600; }
-    .pw-sub { font-size: 14px; color: var(--text2); }
-    .pw-row { display: flex; gap: 8px; width: 100%; max-width: 300px; margin-top: 8px; }
-    .pw-row input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 15px;
-      font-family: inherit;
+    .login-icon { font-size: 48px; margin-bottom: 4px; }
+    .login-title { font-size: 22px; font-weight: 600; }
+    .login-sub { font-size: 14px; color: var(--text2); max-width: 260px; line-height: 1.5; }
+    .btn-google {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       background: var(--surface);
       color: var(--text);
-    }
-    .pw-row input:focus { outline: none; border-color: var(--accent); }
-    .btn-enter {
-      background: var(--accent);
-      color: white;
-      border: none;
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 10px 18px;
+      padding: 12px 24px;
       font-size: 15px;
       font-weight: 500;
       cursor: pointer;
       font-family: inherit;
+      box-shadow: var(--shadow);
+      margin-top: 8px;
+      transition: all 0.15s;
     }
-    .btn-enter:hover { opacity: 0.9; }
-    .pw-err { color: var(--red); font-size: 13px; display: none; }
+    .btn-google:hover { background: var(--surface2); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .btn-google svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .login-err { color: var(--red); font-size: 13px; display: none; }
+    .login-note { font-size: 12px; color: var(--text3); max-width: 240px; line-height: 1.5; }
 
     /* FORM */
     .section {
@@ -131,11 +128,7 @@
     }
     .fg input:focus, .fg select:focus { outline: none; border-color: var(--accent); }
 
-    .photo-upload {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .photo-upload { display: flex; align-items: center; gap: 12px; }
     .photo-btn {
       display: flex;
       align-items: center;
@@ -159,11 +152,7 @@
       border: 1px solid var(--border);
       display: none;
     }
-    .upload-progress {
-      font-size: 12px;
-      color: var(--text2);
-      display: none;
-    }
+    .upload-progress { font-size: 12px; color: var(--text2); display: none; margin-top: 4px; }
 
     .form-footer { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
     .btn-post {
@@ -213,7 +202,6 @@
     .li-thumb {
       width: 52px; height: 52px;
       border-radius: 8px;
-      object-fit: cover;
       border: 1px solid var(--border);
       flex-shrink: 0;
       background: var(--surface2);
@@ -221,8 +209,9 @@
       align-items: center;
       justify-content: center;
       font-size: 22px;
+      overflow: hidden;
     }
-    .li-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    .li-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .li-info { flex: 1; min-width: 0; }
     .li-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .li-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
@@ -230,103 +219,80 @@
     .li-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
     .btn-sold {
-      background: var(--green-bg);
-      color: var(--green);
-      border: 1px solid #a8d5be;
-      border-radius: 8px;
-      padding: 6px 11px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
+      background: var(--green-bg); color: var(--green);
+      border: 1px solid #a8d5be; border-radius: 8px;
+      padding: 6px 11px; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
     }
     .btn-sold:hover { background: var(--green); color: white; }
     .btn-relist {
-      background: var(--amber-bg);
-      color: var(--amber);
-      border: 1px solid #f5cc8a;
-      border-radius: 8px;
-      padding: 6px 11px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
+      background: var(--amber-bg); color: var(--amber);
+      border: 1px solid #f5cc8a; border-radius: 8px;
+      padding: 6px 11px; font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
     }
     .btn-relist:hover { background: var(--amber); color: white; }
     .btn-del {
-      background: var(--red-bg);
-      color: var(--red);
-      border: 1px solid #f5b8be;
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 13px;
-      cursor: pointer;
-      font-family: inherit;
+      background: var(--red-bg); color: var(--red);
+      border: 1px solid #f5b8be; border-radius: 8px;
+      padding: 6px 10px; font-size: 13px;
+      cursor: pointer; font-family: inherit;
     }
     .btn-del:hover { background: var(--red); color: white; }
 
     .sold-pill {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 600;
-      background: var(--green-bg);
-      color: var(--green);
-      padding: 2px 7px;
-      border-radius: 999px;
-      margin-left: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      display: inline-block; font-size: 10px; font-weight: 600;
+      background: var(--green-bg); color: var(--green);
+      padding: 2px 7px; border-radius: 999px; margin-left: 6px;
+      text-transform: uppercase; letter-spacing: 0.04em;
     }
 
-    .empty {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text3);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text2);
-      font-size: 14px;
-    }
+    .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.6; }
+    .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
 
     @media (max-width: 400px) {
       .form-grid { grid-template-columns: 1fr; }
       .fg.full { grid-column: 1; }
+      .user-email { display: none; }
     }
   </style>
 </head>
 <body>
 
+<!-- TOPBAR (shown when signed in) -->
 <div class="topbar" id="topbar" style="display:none">
   <div>
     <div class="topbar-title">Rob's Carvings</div>
     <div class="topbar-sub">Admin panel</div>
   </div>
-  <button class="btn-lock" onclick="logout()">🔒 Lock</button>
+  <div class="topbar-user">
+    <span class="user-email" id="user-email"></span>
+    <button class="btn-signout" onclick="signOut()">Sign out</button>
+  </div>
 </div>
 
-<!-- PASSWORD SCREEN -->
-<div id="pw-screen" class="pw-screen">
-  <div class="pw-icon">🪵</div>
-  <div class="pw-title">Rob's Carvings Admin</div>
-  <div class="pw-sub">Enter your password to manage listings.</div>
-  <div class="pw-row">
-    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
-    <button class="btn-enter" onclick="checkPw()">Enter</button>
-  </div>
-  <div class="pw-err" id="pw-err">Incorrect password.</div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-icon">🪵</div>
+  <div class="login-title">Rob's Carvings Admin</div>
+  <div class="login-sub">Sign in with your Google account to manage listings.</div>
+  <button class="btn-google" onclick="signInWithGoogle()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+    Sign in with Google
+  </button>
+  <div class="login-err" id="login-err">Sign-in failed. Make sure you're using the correct Google account.</div>
+  <div class="login-note">Only authorized accounts can access this panel.</div>
 </div>
 
 <!-- ADMIN PANEL -->
 <div id="admin-panel" style="display:none">
   <div class="content">
 
-    <!-- ADD FORM -->
     <div class="section">
       <div class="section-title">Add a carving</div>
       <div class="form-grid">
@@ -367,7 +333,6 @@
       </div>
     </div>
 
-    <!-- LISTINGS -->
     <div class="section">
       <div class="tabs">
         <button class="tab-btn active" id="tab-avail" onclick="switchTab('available')">Available</button>
@@ -383,6 +348,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
   import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut as fbSignOut } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDhm53zF1b4mJ8Jwx7FFHlpObeMiKzud4g",
@@ -396,33 +362,44 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const storage = getStorage(app);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
 
-  const PASS = 'uniquecode';
+  // YOUR authorized Google email — only this account can access admin
+  const AUTHORIZED_EMAIL = 'adschulz0@gmail.com';
+
   let currentTab = 'available';
   let selectedFile = null;
   let carvings = [];
 
-  // ── AUTH ──────────────────────────────────────────────
-  window.checkPw = function() {
-    const val = document.getElementById('pw-input').value;
-    const err = document.getElementById('pw-err');
-    if (val === PASS) {
-      document.getElementById('pw-screen').style.display = 'none';
+  // ── AUTH STATE ────────────────────────────────────────
+  onAuthStateChanged(auth, user => {
+    if (user && user.email === AUTHORIZED_EMAIL) {
+      document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-panel').style.display = '';
       document.getElementById('topbar').style.display = '';
-      err.style.display = 'none';
+      document.getElementById('user-email').textContent = user.email;
       loadCarvings();
     } else {
-      err.style.display = '';
-      document.getElementById('pw-input').value = '';
+      if (user) fbSignOut(auth); // signed in but wrong account
+      document.getElementById('login-screen').style.display = '';
+      document.getElementById('admin-panel').style.display = 'none';
+      document.getElementById('topbar').style.display = 'none';
+    }
+  });
+
+  window.signInWithGoogle = async function() {
+    const errEl = document.getElementById('login-err');
+    errEl.style.display = 'none';
+    try {
+      await signInWithPopup(auth, provider);
+    } catch(e) {
+      errEl.style.display = '';
     }
   };
 
-  window.logout = function() {
-    document.getElementById('pw-screen').style.display = '';
-    document.getElementById('admin-panel').style.display = 'none';
-    document.getElementById('topbar').style.display = 'none';
-    document.getElementById('pw-input').value = '';
+  window.signOut = async function() {
+    await fbSignOut(auth);
   };
 
   // ── PHOTO ─────────────────────────────────────────────
@@ -456,7 +433,6 @@
     statusEl.textContent = 'Posting…';
 
     let photoURL = null;
-
     if (selectedFile) {
       const prog = document.getElementById('upload-progress');
       prog.style.display = '';
@@ -478,7 +454,6 @@
       await addDoc(collection(db, 'carvings'), {
         name, cat, price, photoURL, sold: false, added: Date.now()
       });
-
       document.getElementById('f-name').value = '';
       document.getElementById('f-price').value = '';
       document.getElementById('f-photo').value = '';
@@ -567,7 +542,7 @@
     if (!confirm('Delete this carving permanently?')) return;
     await deleteDoc(doc(db, 'carvings', id));
     if (photoURL) {
-      try { await deleteObject(ref(storage, photoURL)); } catch(e) {}
+      try { await deleteObject(ref(storage, photoURL)); } catch(e) {} 
     }
     carvings = carvings.filter(x => x.id !== id);
     renderList();
