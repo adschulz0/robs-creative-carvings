@@ -17,13 +17,15 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; }
-    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; padding: 20px 0; }
-    .logo { text-decoration: none; color: inherit; }
-    .logo-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--accent); line-height: 1.2; }
-    .logo-sub { font-size: 12px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
 
-    .hero { width: 100%; height: 420px; background-image: url('/images/Eagle.jpg'); background-size: cover; background-position: center; }
+    header { display: none; }
+
+    .hero { position: relative; width: 100%; height: 420px; background-image: url('/images/Eagle.jpg'); background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: space-between; padding: 32px 28px; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.08) 45%, rgba(0,0,0,0.08) 60%, rgba(0,0,0,0.58) 100%); }
+    .hero-top { position: relative; z-index: 1; }
+    .hero-brand { font-family: 'Playfair Display', serif; font-size: clamp(26px, 5vw, 44px); font-weight: 600; color: white; line-height: 1.15; text-shadow: 0 2px 14px rgba(0,0,0,0.5); }
+    .hero-bottom { position: relative; z-index: 1; }
+    .hero-tagline { font-size: 13px; color: rgba(255,255,255,0.88); letter-spacing: 0.12em; text-transform: uppercase; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
 
     .pickup-bar { background: var(--accent-light); border-bottom: 1px solid #e2d5c0; padding: 12px 24px; text-align: center; font-size: 14px; color: var(--accent); }
     .pickup-bar strong { font-weight: 500; }
@@ -106,7 +108,7 @@
     footer a { color: rgba(255,255,255,0.8); }
 
     @media (max-width: 600px) {
-      .hero { height: 260px; }
+      .hero { height: 280px; padding: 22px 18px; }
       .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
       .gallery-header { flex-direction: column; }
       .lightbox-prev { left: 4px; }
@@ -125,7 +127,14 @@
   </div>
 </header>
 
-<div class="hero"></div>
+<div class="hero">
+  <div class="hero-top">
+    <div class="hero-brand">Rob's Creative Carvings</div>
+  </div>
+  <div class="hero-bottom">
+    <div class="hero-tagline">Handcrafted in Pe Ell, Washington</div>
+  </div>
+</div>
 
 <div class="pickup-bar">
   <strong>Local pickup only</strong> — See something you like? Call or text <strong>(360) 880-2630</strong> to confirm it's available before making the trip.
