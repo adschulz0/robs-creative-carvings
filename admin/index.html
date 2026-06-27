@@ -366,7 +366,8 @@
   const provider = new GoogleAuthProvider();
 
   // YOUR authorized Google email — only this account can access admin
-  const AUTHORIZED_EMAIL = 'adschulz0@gmail.com';
+  const AUTHORIZED_EMAIL_1 = 'adschulz0@gmail.com';
+  const AUTHORIZED_EMAIL_2 = 'joshaschulz@gmail.com';
 
   let currentTab = 'available';
   let selectedFile = null;
@@ -374,7 +375,7 @@
 
   // ── AUTH STATE ────────────────────────────────────────
   onAuthStateChanged(auth, user => {
-    if (user && user.email === AUTHORIZED_EMAIL) {
+    if (user && (user.email === AUTHORIZED_EMAIL_1 || user.email === AUTHORIZED_EMAIL_2)) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-panel').style.display = '';
       document.getElementById('topbar').style.display = '';
