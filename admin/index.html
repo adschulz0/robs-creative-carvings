@@ -8,209 +8,86 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #f5f3ef;
-      --surface: #ffffff;
-      --surface2: #f0ede8;
-      --border: #e2ddd6;
-      --text: #1a1714;
-      --text2: #6b6560;
-      --text3: #9c9790;
-      --accent: #5c4a2a;
-      --accent-bg: #f5efe6;
-      --green: #2d6a4f;
-      --green-bg: #e8f5ee;
-      --red: #9b2335;
-      --red-bg: #fdf0f1;
-      --amber: #854f0b;
-      --amber-bg: #fef3e2;
-      --radius: 10px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --bg: #f5f3ef; --surface: #ffffff; --surface2: #f0ede8;
+      --border: #e2ddd6; --text: #1a1714; --text2: #6b6560; --text3: #9c9790;
+      --accent: #5c4a2a; --green: #2d6a4f; --green-bg: #e8f5ee;
+      --red: #9b2335; --red-bg: #fdf0f1; --amber: #854f0b; --amber-bg: #fef3e2;
+      --radius: 10px; --shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      font-size: 15px;
-    }
-
-    .topbar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
     .topbar-title { font-size: 16px; font-weight: 600; }
     .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
     .topbar-user { display: flex; align-items: center; gap: 10px; }
     .user-email { font-size: 12px; color: var(--text2); }
-    .btn-signout {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 6px 12px;
-      font-size: 13px;
-      color: var(--text2);
-      cursor: pointer;
-      font-family: inherit;
-    }
+    .btn-signout { background: none; border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 12px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; }
     .btn-signout:hover { background: var(--surface2); }
 
     .content { padding: 20px 16px; max-width: 600px; margin: 0 auto; }
 
-    /* LOGIN SCREEN */
-    .login-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 16px;
-      text-align: center;
-      padding: 20px;
-    }
+    .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; text-align: center; padding: 20px; }
     .login-icon { font-size: 48px; margin-bottom: 4px; }
     .login-title { font-size: 22px; font-weight: 600; }
     .login-sub { font-size: 14px; color: var(--text2); max-width: 260px; line-height: 1.5; }
-    .btn-google {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 24px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-      box-shadow: var(--shadow);
-      margin-top: 8px;
-      transition: all 0.15s;
-    }
-    .btn-google:hover { background: var(--surface2); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .btn-google { display: flex; align-items: center; gap: 10px; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 24px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; box-shadow: var(--shadow); margin-top: 8px; transition: all 0.15s; }
+    .btn-google:hover { background: var(--surface2); }
     .btn-google svg { width: 20px; height: 20px; flex-shrink: 0; }
     .login-err { color: var(--red); font-size: 13px; display: none; }
     .login-note { font-size: 12px; color: var(--text3); max-width: 240px; line-height: 1.5; }
 
-    /* FORM */
-    .section {
-      background: var(--surface);
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
-    }
+    .section { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow); }
     .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .fg { display: flex; flex-direction: column; gap: 5px; }
     .fg.full { grid-column: 1 / -1; }
     .fg label { font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; }
-    .fg input, .fg select {
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 14px;
-      font-family: inherit;
-      background: var(--surface);
-      color: var(--text);
-    }
+    .fg input, .fg select { padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text); }
     .fg input:focus, .fg select:focus { outline: none; border-color: var(--accent); }
 
-    .photo-upload { display: flex; align-items: center; gap: 12px; }
-    .photo-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 14px;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      font-size: 13px;
-      color: var(--text2);
-      cursor: pointer;
-      background: var(--surface2);
-      font-family: inherit;
-      transition: all 0.15s;
+    /* MULTI PHOTO */
+    .photo-section { grid-column: 1 / -1; }
+    .photo-actions { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .btn-photo-add {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border: 1px dashed var(--border); border-radius: var(--radius);
+      font-size: 13px; color: var(--text2); cursor: pointer; background: var(--surface2);
+      font-family: inherit; transition: all 0.15s;
     }
-    .photo-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .photo-btn input { display: none; }
-    .thumb-preview {
-      width: 56px; height: 56px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid var(--border);
-      display: none;
+    .btn-photo-add:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-photo-add input { display: none; }
+    .photo-count { font-size: 12px; color: var(--text3); align-self: center; }
+
+    .photo-previews { display: flex; gap: 8px; flex-wrap: wrap; }
+    .photo-thumb-wrap { position: relative; width: 72px; height: 72px; }
+    .photo-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border); display: block; }
+    .photo-thumb-del {
+      position: absolute; top: -6px; right: -6px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--red); color: white; border: none;
+      font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      line-height: 1; font-family: inherit;
     }
-    .upload-progress { font-size: 12px; color: var(--text2); display: none; margin-top: 4px; }
+    .photo-thumb-del:hover { background: #7a1a28; }
+    .upload-progress { font-size: 12px; color: var(--text2); display: none; margin-top: 6px; }
 
     .form-footer { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
-    .btn-post {
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      padding: 10px 22px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-    }
+    .btn-post { background: var(--accent); color: white; border: none; border-radius: var(--radius); padding: 10px 22px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
     .btn-post:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-post:not(:disabled):hover { opacity: 0.9; }
     .post-status { font-size: 13px; color: var(--text2); }
     .post-status.ok { color: var(--green); }
     .post-status.err { color: var(--red); }
 
-    /* TABS */
     .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
-    .tab-btn {
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text2);
-      cursor: pointer;
-      font-family: inherit;
-    }
+    .tab-btn { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; font-family: inherit; }
     .tab-btn.active { background: var(--text); color: white; border-color: transparent; }
 
-    /* LIST */
     .list { display: flex; flex-direction: column; gap: 10px; }
-    .list-item {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow);
-    }
-    .li-thumb {
-      width: 52px; height: 52px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-      background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      overflow: hidden;
-    }
+    .list-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); }
+    .li-thumb { width: 52px; height: 52px; border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 22px; overflow: hidden; }
     .li-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .li-info { flex: 1; min-width: 0; }
     .li-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -218,34 +95,14 @@
     .li-price { font-size: 14px; font-weight: 600; color: var(--accent); margin-top: 3px; }
     .li-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
-    .btn-sold {
-      background: var(--green-bg); color: var(--green);
-      border: 1px solid #a8d5be; border-radius: 8px;
-      padding: 6px 11px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit; white-space: nowrap;
-    }
+    .btn-sold { background: var(--green-bg); color: var(--green); border: 1px solid #a8d5be; border-radius: 8px; padding: 6px 11px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
     .btn-sold:hover { background: var(--green); color: white; }
-    .btn-relist {
-      background: var(--amber-bg); color: var(--amber);
-      border: 1px solid #f5cc8a; border-radius: 8px;
-      padding: 6px 11px; font-size: 12px; font-weight: 500;
-      cursor: pointer; font-family: inherit;
-    }
+    .btn-relist { background: var(--amber-bg); color: var(--amber); border: 1px solid #f5cc8a; border-radius: 8px; padding: 6px 11px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; }
     .btn-relist:hover { background: var(--amber); color: white; }
-    .btn-del {
-      background: var(--red-bg); color: var(--red);
-      border: 1px solid #f5b8be; border-radius: 8px;
-      padding: 6px 10px; font-size: 13px;
-      cursor: pointer; font-family: inherit;
-    }
+    .btn-del { background: var(--red-bg); color: var(--red); border: 1px solid #f5b8be; border-radius: 8px; padding: 6px 10px; font-size: 13px; cursor: pointer; font-family: inherit; }
     .btn-del:hover { background: var(--red); color: white; }
-
-    .sold-pill {
-      display: inline-block; font-size: 10px; font-weight: 600;
-      background: var(--green-bg); color: var(--green);
-      padding: 2px 7px; border-radius: 999px; margin-left: 6px;
-      text-transform: uppercase; letter-spacing: 0.04em;
-    }
+    .sold-pill { display: inline-block; font-size: 10px; font-weight: 600; background: var(--green-bg); color: var(--green); padding: 2px 7px; border-radius: 999px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .photo-badge { font-size: 10px; color: var(--text3); margin-left: 4px; }
 
     .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; line-height: 1.6; }
     .loading { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
@@ -259,7 +116,6 @@
 </head>
 <body>
 
-<!-- TOPBAR (shown when signed in) -->
 <div class="topbar" id="topbar" style="display:none">
   <div>
     <div class="topbar-title">Rob's Carvings</div>
@@ -271,7 +127,6 @@
   </div>
 </div>
 
-<!-- LOGIN SCREEN -->
 <div id="login-screen" class="login-screen">
   <div class="login-icon">🪵</div>
   <div class="login-title">Rob's Carvings Admin</div>
@@ -289,7 +144,6 @@
   <div class="login-note">Only authorized accounts can access this panel.</div>
 </div>
 
-<!-- ADMIN PANEL -->
 <div id="admin-panel" style="display:none">
   <div class="content">
 
@@ -315,16 +169,21 @@
           <label>Price ($)</label>
           <input type="number" id="f-price" placeholder="150" min="0">
         </div>
-        <div class="fg">
-          <label>Photo</label>
-          <div class="photo-upload">
-            <label class="photo-btn">
-              📷 <span id="photo-label">Add photo</span>
-              <input type="file" id="f-photo" accept="image/*" capture="environment" onchange="onPhotoSelected(this)">
+        <div class="fg photo-section">
+          <label>Photos (up to 5)</label>
+          <div class="photo-actions">
+            <label class="btn-photo-add">
+              📷 Camera
+              <input type="file" id="f-photo-camera" accept="image/*" capture="environment" onchange="onPhotosSelected(this)">
             </label>
-            <img id="thumb-preview" class="thumb-preview" alt="Preview">
+            <label class="btn-photo-add">
+              🖼️ Gallery
+              <input type="file" id="f-photo-gallery" accept="image/*" multiple onchange="onPhotosSelected(this)">
+            </label>
+            <span class="photo-count" id="photo-count"></span>
           </div>
-          <div class="upload-progress" id="upload-progress">Uploading photo…</div>
+          <div class="photo-previews" id="photo-previews"></div>
+          <div class="upload-progress" id="upload-progress"></div>
         </div>
       </div>
       <div class="form-footer">
@@ -365,24 +224,21 @@
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  // YOUR authorized Google email — only this account can access admin
-  const AUTHORIZED_EMAIL_1 = 'adschulz0@gmail.com';
-  const AUTHORIZED_EMAIL_2 = 'joshaschulz@gmail.com';
-
+  const AUTHORIZED_EMAILS = ['adschulz0@gmail.com', 'joshaschulz@gmail.com'];
   let currentTab = 'available';
-  let selectedFile = null;
+  let selectedFiles = [];
   let carvings = [];
 
-  // ── AUTH STATE ────────────────────────────────────────
+  // ── AUTH ──────────────────────────────────────────────
   onAuthStateChanged(auth, user => {
-    if (user && (user.email === AUTHORIZED_EMAIL_1 || user.email === AUTHORIZED_EMAIL_2)) {
+    if (user && AUTHORIZED_EMAILS.includes(user.email)) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-panel').style.display = '';
       document.getElementById('topbar').style.display = '';
       document.getElementById('user-email').textContent = user.email;
       loadCarvings();
     } else {
-      if (user) fbSignOut(auth); // signed in but wrong account
+      if (user) fbSignOut(auth);
       document.getElementById('login-screen').style.display = '';
       document.getElementById('admin-panel').style.display = 'none';
       document.getElementById('topbar').style.display = 'none';
@@ -392,30 +248,47 @@
   window.signInWithGoogle = async function() {
     const errEl = document.getElementById('login-err');
     errEl.style.display = 'none';
-    try {
-      await signInWithPopup(auth, provider);
-    } catch(e) {
-      errEl.style.display = '';
-    }
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { errEl.style.display = ''; }
   };
 
-  window.signOut = async function() {
-    await fbSignOut(auth);
+  window.signOut = async function() { await fbSignOut(auth); };
+
+  // ── PHOTOS ────────────────────────────────────────────
+  window.onPhotosSelected = function(input) {
+    const files = Array.from(input.files);
+    const remaining = 5 - selectedFiles.length;
+    const toAdd = files.slice(0, remaining);
+    toAdd.forEach(file => {
+      if (selectedFiles.length < 5) selectedFiles.push(file);
+    });
+    input.value = '';
+    renderPhotoPreviews();
   };
 
-  // ── PHOTO ─────────────────────────────────────────────
-  window.onPhotoSelected = function(input) {
-    const file = input.files[0];
-    if (!file) return;
-    selectedFile = file;
-    document.getElementById('photo-label').textContent = file.name.length > 16 ? file.name.slice(0,14)+'…' : file.name;
-    const reader = new FileReader();
-    reader.onload = e => {
-      const prev = document.getElementById('thumb-preview');
-      prev.src = e.target.result;
-      prev.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+  function renderPhotoPreviews() {
+    const wrap = document.getElementById('photo-previews');
+    const countEl = document.getElementById('photo-count');
+    countEl.textContent = selectedFiles.length > 0 ? `${selectedFiles.length}/5 photos` : '';
+    wrap.innerHTML = '';
+    selectedFiles.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const div = document.createElement('div');
+        div.className = 'photo-thumb-wrap';
+        div.innerHTML = `
+          <img class="photo-thumb" src="${e.target.result}" alt="photo ${i+1}">
+          <button class="photo-thumb-del" onclick="removePhoto(${i})">×</button>
+        `;
+        wrap.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  window.removePhoto = function(index) {
+    selectedFiles.splice(index, 1);
+    renderPhotoPreviews();
   };
 
   // ── ADD ───────────────────────────────────────────────
@@ -425,42 +298,46 @@
     const price = parseFloat(document.getElementById('f-price').value);
     const statusEl = document.getElementById('post-status');
     const btn = document.getElementById('btn-post');
+    const prog = document.getElementById('upload-progress');
 
     statusEl.className = 'post-status';
     if (!name) { statusEl.textContent = 'Add a name.'; statusEl.className = 'post-status err'; return; }
     if (isNaN(price) || price < 0) { statusEl.textContent = 'Add a valid price.'; statusEl.className = 'post-status err'; return; }
 
     btn.disabled = true;
-    statusEl.textContent = 'Posting…';
+    prog.style.display = '';
+    const photoURLs = [];
 
-    let photoURL = null;
-    if (selectedFile) {
-      const prog = document.getElementById('upload-progress');
-      prog.style.display = '';
+    for (let i = 0; i < selectedFiles.length; i++) {
+      prog.textContent = `Uploading photo ${i + 1} of ${selectedFiles.length}…`;
       try {
-        const storageRef = ref(storage, `carvings/${Date.now()}_${selectedFile.name}`);
-        await uploadBytes(storageRef, selectedFile);
-        photoURL = await getDownloadURL(storageRef);
-        prog.style.display = 'none';
+        const storageRef = ref(storage, `carvings/${Date.now()}_${selectedFiles[i].name}`);
+        await uploadBytes(storageRef, selectedFiles[i]);
+        const url = await getDownloadURL(storageRef);
+        photoURLs.push(url);
       } catch(e) {
         prog.style.display = 'none';
-        statusEl.textContent = 'Photo upload failed. Try again.';
+        statusEl.textContent = `Photo ${i+1} upload failed. Try again.`;
         statusEl.className = 'post-status err';
         btn.disabled = false;
         return;
       }
     }
 
+    prog.style.display = 'none';
+
     try {
       await addDoc(collection(db, 'carvings'), {
-        name, cat, price, photoURL, sold: false, added: Date.now()
+        name, cat, price,
+        photoURLs,
+        photoURL: photoURLs[0] || null,
+        sold: false,
+        added: Date.now()
       });
       document.getElementById('f-name').value = '';
       document.getElementById('f-price').value = '';
-      document.getElementById('f-photo').value = '';
-      document.getElementById('photo-label').textContent = 'Add photo';
-      document.getElementById('thumb-preview').style.display = 'none';
-      selectedFile = null;
+      selectedFiles = [];
+      renderPhotoPreviews();
       statusEl.textContent = 'Posted!';
       statusEl.className = 'post-status ok';
       setTimeout(() => { statusEl.textContent = ''; }, 2500);
@@ -497,27 +374,31 @@
       return;
     }
 
-    area.innerHTML = subset.map(c => `
-      <div class="list-item">
-        <div class="li-thumb">
-          ${c.photoURL ? `<img src="${c.photoURL}" alt="${c.name}">` : (catEmoji[c.cat] || '🪵')}
+    area.innerHTML = '<div class="list">' + subset.map(c => {
+      const photos = c.photoURLs || (c.photoURL ? [c.photoURL] : []);
+      const thumb = photos[0];
+      const photoCount = photos.length;
+      return `
+        <div class="list-item">
+          <div class="li-thumb">
+            ${thumb ? `<img src="${thumb}" alt="${c.name}">` : (catEmoji[c.cat] || '🪵')}
+          </div>
+          <div class="li-info">
+            <div class="li-name">${c.name}${c.sold ? '<span class="sold-pill">Sold</span>' : ''}${photoCount > 1 ? `<span class="photo-badge">📷 ${photoCount}</span>` : ''}</div>
+            <div class="li-meta">${c.cat}</div>
+            <div class="li-price">$${Number(c.price).toFixed(0)}</div>
+          </div>
+          <div class="li-actions">
+            ${!c.sold
+              ? `<button class="btn-sold" onclick="markSold('${c.id}')">Mark sold</button>`
+              : `<button class="btn-relist" onclick="markAvailable('${c.id}')">Relist</button>`}
+            <button class="btn-del" onclick="deleteCarving('${c.id}', ${JSON.stringify(photos)})">🗑</button>
+          </div>
         </div>
-        <div class="li-info">
-          <div class="li-name">${c.name}${c.sold ? '<span class="sold-pill">Sold</span>' : ''}</div>
-          <div class="li-meta">${c.cat}</div>
-          <div class="li-price">$${Number(c.price).toFixed(0)}</div>
-        </div>
-        <div class="li-actions">
-          ${!c.sold
-            ? `<button class="btn-sold" onclick="markSold('${c.id}')">Mark sold</button>`
-            : `<button class="btn-relist" onclick="markAvailable('${c.id}')">Relist</button>`}
-          <button class="btn-del" onclick="deleteCarving('${c.id}', '${c.photoURL || ''}')">🗑</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('') + '</div>';
   }
 
-  // ── ACTIONS ───────────────────────────────────────────
   window.switchTab = function(tab) {
     currentTab = tab;
     document.getElementById('tab-avail').classList.toggle('active', tab === 'available');
@@ -539,11 +420,11 @@
     renderList();
   };
 
-  window.deleteCarving = async function(id, photoURL) {
+  window.deleteCarving = async function(id, photoURLs) {
     if (!confirm('Delete this carving permanently?')) return;
     await deleteDoc(doc(db, 'carvings', id));
-    if (photoURL) {
-      try { await deleteObject(ref(storage, photoURL)); } catch(e) {} 
+    for (const url of photoURLs) {
+      try { await deleteObject(ref(storage, url)); } catch(e) {}
     }
     carvings = carvings.filter(x => x.id !== id);
     renderList();
