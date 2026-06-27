@@ -410,7 +410,7 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, price, notes, blockingOut, hairingDetail, finishing, selling })
+          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing, selling })
         });
         prog.style.display = 'none';
       } catch(e) {
@@ -516,10 +516,21 @@
   window.saveName = async function(id) {
     const newName = document.getElementById(`name-input-${id}`).value.trim();
     if (!newName) return;
+    const c = carvings.find(x => x.id === id);
+    if (!c) return;
+    const oldName = c.name;
     try {
       await updateDoc(doc(db, 'carvings', id), { name: newName });
-      const c = carvings.find(x => x.id === id);
-      if (c) c.name = newName;
+      c.name = newName;
+      // Sync rename to Google Sheets
+      try {
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'rename', oldName, newName })
+        });
+      } catch(e) { console.warn('Sheet rename sync failed:', e); }
       renderList();
     } catch(e) {
       alert('Failed to save. Check your connection.');
@@ -549,9 +560,24 @@
 
   window.deleteCarving = async function(id, photoURLs) {
     if (!confirm('Delete this carving permanently?')) return;
+    const c = carvings.find(x => x.id === id);
+    const name = c ? c.name : null;
+    // Delete from Firebase
     await deleteDoc(doc(db, 'carvings', id));
+    // Delete photos from Storage
     for (const url of photoURLs) {
       try { await deleteObject(ref(storage, url)); } catch(e) {}
+    }
+    // Sync delete to Google Sheets
+    if (name) {
+      try {
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', name })
+        });
+      } catch(e) { console.warn('Sheet delete sync failed:', e); }
     }
     carvings = carvings.filter(x => x.id !== id);
     renderList();
