@@ -1,1 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rob's Carvings — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --surface2: #f0ede8;
+      --border: #e2ddd6;
+      --text: #1a1714;
+      --text2: #6b6560;
+      --text3: #9c9790;
+      --accent: #5c4a2a;
+      --accent-bg: #f5efe6;
+      --accent-text: #5c4a2a;
+      --green: #2d6a4f;
+      --green-bg: #e8f5ee;
+      --red: #9b2335;
+      --red-bg: #fdf0f1;
+      --amber: #854f0b;
+      --amber-bg: #fef3e2;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-title { font-size: 16px; font-weight: 600; }
+    .topbar-sub { font-size: 12px; color: var(--text2); margin-top: 1px; }
+    .btn-lock {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-lock:hover { background: var(--surface2); }
+
+    .content { padding: 20px 16px; max-width: 600px; margin: 0 auto; }
+
+    /* PASSWORD */
+    .pw-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      gap: 12px;
+      text-align: center;
+      padding: 20px;
+    }
+    .pw-icon { font-size: 40px; margin-bottom: 4px; }
+    .pw-title { font-size: 20px; font-weight: 600; }
+    .pw-sub { font-size: 14px; color: var(--text2); }
+    .pw-row { display: flex; gap: 8px; width: 100%; max-width: 300px; margin-top: 8px; }
+    .pw-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .pw-row input:focus { outline: none; border-color: var(--accent); }
+    .btn-enter {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-enter:hover { opacity: 0.9; }
+    .pw-err { color: var(--red); font-size: 13px; display: none; }
+
+    /* FORM */
+    .section {
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+    .fg.full { grid-column: 1 / -1; }
+    .fg label { font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.04em; }
+    .fg input, .fg select {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-family: inherit;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .fg input:focus, .fg select:focus { outline: none; border-color: var(--accent); }
+
+    .photo-upload {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .photo-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--text2);
+      cursor: pointer;
+      background: var(--surface2);
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .photo-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .photo-btn input { display: none; }
+    .thumb-preview {
+      width: 56px; height: 56px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      display: none;
+    }
+    .upload-progress {
+      font-size: 12px;
+      color: var(--text2);
+      display: none;
+    }
+
+    .form-footer { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+    .btn-post {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-post:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-post:not(:disabled):hover { opacity: 0.9; }
+    .post-status { font-size: 13px; color: var(--text2); }
+    .post-status.ok { color: var(--green); }
+    .post-status.err { color: var(--red); }
+
+    /* TABS */
+    .tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .tab-btn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .tab-btn.active { background: var(--text); color: white; border-color: transparent; }
+
+    /* LIST */
+    .list { display: flex; flex-direction: column; gap: 10px; }
+    .list-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .li-thumb {
+      width: 52px; height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .li-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+    .li-info { flex: 1; min-width: 0; }
+    .li-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .li-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+    .li-price { font-size: 14px; font-weight: 600; color: var(--accent); margin-top: 3px; }
+    .li-actions { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+
+    .btn-sold {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid #a8d5be;
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-sold:hover { background: var(--green); color: white; }
+    .btn-relist {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border: 1px solid #f5cc8a;
+      border-radius: 8px;
+      padding: 6px 11px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-relist:hover { background: var(--amber); color: white; }
+    .btn-del {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid #f5b8be;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-del:hover { background: var(--red); color: white; }
+
+    .sold-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--green-bg);
+      color: var(--green);
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-left: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text3);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text2);
+      font-size: 14px;
+    }
+
+    @media (max-width: 400px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .fg.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar" id="topbar" style="display:none">
+  <div>
+    <div class="topbar-title">Rob's Carvings</div>
+    <div class="topbar-sub">Admin panel</div>
+  </div>
+  <button class="btn-lock" onclick="logout()">🔒 Lock</button>
+</div>
+
+<!-- PASSWORD SCREEN -->
+<div id="pw-screen" class="pw-screen">
+  <div class="pw-icon">🪵</div>
+  <div class="pw-title">Rob's Carvings Admin</div>
+  <div class="pw-sub">Enter your password to manage listings.</div>
+  <div class="pw-row">
+    <input type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="btn-enter" onclick="checkPw()">Enter</button>
+  </div>
+  <div class="pw-err" id="pw-err">Incorrect password.</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel" style="display:none">
+  <div class="content">
+
+    <!-- ADD FORM -->
+    <div class="section">
+      <div class="section-title">Add a carving</div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Cedar log bear">
+        </div>
+        <div class="fg">
+          <label>Category</label>
+          <select id="f-cat">
+            <option value="Log Bears">Log Bears</option>
+            <option value="Standing Bears">Standing Bears</option>
+            <option value="Fish">Fish</option>
+            <option value="Large Pieces">Large Pieces</option>
+            <option value="Frames">Frames</option>
+            <option value="Misc">Misc</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Price ($)</label>
+          <input type="number" id="f-price" placeholder="150" min="0">
+        </div>
+        <div class="fg">
+          <label>Photo</label>
+          <div class="photo-upload">
+            <label class="photo-btn">
+              📷 <span id="photo-label">Add photo</span>
+              <input type="file" id="f-photo" accept="image/*" capture="environment" onchange="onPhotoSelected(this)">
+            </label>
+            <img id="thumb-preview" class="thumb-preview" alt="Preview">
+          </div>
+          <div class="upload-progress" id="upload-progress">Uploading photo…</div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="btn-post" id="btn-post" onclick="addCarving()">Post listing</button>
+        <span class="post-status" id="post-status"></span>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <div class="section">
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-avail" onclick="switchTab('available')">Available</button>
+        <button class="tab-btn" id="tab-sold" onclick="switchTab('sold')">Sold archive</button>
+      </div>
+      <div id="list-area"><div class="loading">Loading…</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDhm53zF1b4mJ8Jwx7FFHlpObeMiKzud4g",
+    authDomain: "robs-creative-carvings.firebaseapp.com",
+    projectId: "robs-creative-carvings",
+    storageBucket: "robs-creative-carvings.firebasestorage.app",
+    messagingSenderId: "61101796590",
+    appId: "1:61101796590:web:8a2ccf49104a4bf36717ff"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  const PASS = 'uniquecode';
+  let currentTab = 'available';
+  let selectedFile = null;
+  let carvings = [];
+
+  // ── AUTH ──────────────────────────────────────────────
+  window.checkPw = function() {
+    const val = document.getElementById('pw-input').value;
+    const err = document.getElementById('pw-err');
+    if (val === PASS) {
+      document.getElementById('pw-screen').style.display = 'none';
+      document.getElementById('admin-panel').style.display = '';
+      document.getElementById('topbar').style.display = '';
+      err.style.display = 'none';
+      loadCarvings();
+    } else {
+      err.style.display = '';
+      document.getElementById('pw-input').value = '';
+    }
+  };
+
+  window.logout = function() {
+    document.getElementById('pw-screen').style.display = '';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('topbar').style.display = 'none';
+    document.getElementById('pw-input').value = '';
+  };
+
+  // ── PHOTO ─────────────────────────────────────────────
+  window.onPhotoSelected = function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    selectedFile = file;
+    document.getElementById('photo-label').textContent = file.name.length > 16 ? file.name.slice(0,14)+'…' : file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const prev = document.getElementById('thumb-preview');
+      prev.src = e.target.result;
+      prev.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── ADD ───────────────────────────────────────────────
+  window.addCarving = async function() {
+    const name = document.getElementById('f-name').value.trim();
+    const cat = document.getElementById('f-cat').value;
+    const price = parseFloat(document.getElementById('f-price').value);
+    const statusEl = document.getElementById('post-status');
+    const btn = document.getElementById('btn-post');
+
+    statusEl.className = 'post-status';
+    if (!name) { statusEl.textContent = 'Add a name.'; statusEl.className = 'post-status err'; return; }
+    if (isNaN(price) || price < 0) { statusEl.textContent = 'Add a valid price.'; statusEl.className = 'post-status err'; return; }
+
+    btn.disabled = true;
+    statusEl.textContent = 'Posting…';
+
+    let photoURL = null;
+
+    if (selectedFile) {
+      const prog = document.getElementById('upload-progress');
+      prog.style.display = '';
+      try {
+        const storageRef = ref(storage, `carvings/${Date.now()}_${selectedFile.name}`);
+        await uploadBytes(storageRef, selectedFile);
+        photoURL = await getDownloadURL(storageRef);
+        prog.style.display = 'none';
+      } catch(e) {
+        prog.style.display = 'none';
+        statusEl.textContent = 'Photo upload failed. Try again.';
+        statusEl.className = 'post-status err';
+        btn.disabled = false;
+        return;
+      }
+    }
+
+    try {
+      await addDoc(collection(db, 'carvings'), {
+        name, cat, price, photoURL, sold: false, added: Date.now()
+      });
+
+      document.getElementById('f-name').value = '';
+      document.getElementById('f-price').value = '';
+      document.getElementById('f-photo').value = '';
+      document.getElementById('photo-label').textContent = 'Add photo';
+      document.getElementById('thumb-preview').style.display = 'none';
+      selectedFile = null;
+      statusEl.textContent = 'Posted!';
+      statusEl.className = 'post-status ok';
+      setTimeout(() => { statusEl.textContent = ''; }, 2500);
+      loadCarvings();
+    } catch(e) {
+      statusEl.textContent = 'Failed to save. Check connection.';
+      statusEl.className = 'post-status err';
+    }
+    btn.disabled = false;
+  };
+
+  // ── LOAD ──────────────────────────────────────────────
+  async function loadCarvings() {
+    const area = document.getElementById('list-area');
+    area.innerHTML = '<div class="loading">Loading…</div>';
+    try {
+      const q = query(collection(db, 'carvings'), orderBy('added', 'desc'));
+      const snap = await getDocs(q);
+      carvings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderList();
+    } catch(e) {
+      area.innerHTML = '<div class="empty">Couldn\'t load listings. Check your connection.</div>';
+    }
+  }
+
+  // ── RENDER ────────────────────────────────────────────
+  function renderList() {
+    const area = document.getElementById('list-area');
+    const catEmoji = { 'Log Bears':'🪵','Standing Bears':'🐻','Fish':'🐟','Large Pieces':'📦','Frames':'🖼️','Misc':'✨' };
+    const subset = carvings.filter(c => currentTab === 'available' ? !c.sold : c.sold);
+
+    if (!subset.length) {
+      area.innerHTML = `<div class="empty">${currentTab === 'available' ? 'No available listings.<br>Add one above.' : 'No sold pieces yet.'}</div>`;
+      return;
+    }
+
+    area.innerHTML = subset.map(c => `
+      <div class="list-item">
+        <div class="li-thumb">
+          ${c.photoURL ? `<img src="${c.photoURL}" alt="${c.name}">` : (catEmoji[c.cat] || '🪵')}
+        </div>
+        <div class="li-info">
+          <div class="li-name">${c.name}${c.sold ? '<span class="sold-pill">Sold</span>' : ''}</div>
+          <div class="li-meta">${c.cat}</div>
+          <div class="li-price">$${Number(c.price).toFixed(0)}</div>
+        </div>
+        <div class="li-actions">
+          ${!c.sold
+            ? `<button class="btn-sold" onclick="markSold('${c.id}')">Mark sold</button>`
+            : `<button class="btn-relist" onclick="markAvailable('${c.id}')">Relist</button>`}
+          <button class="btn-del" onclick="deleteCarving('${c.id}', '${c.photoURL || ''}')">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── ACTIONS ───────────────────────────────────────────
+  window.switchTab = function(tab) {
+    currentTab = tab;
+    document.getElementById('tab-avail').classList.toggle('active', tab === 'available');
+    document.getElementById('tab-sold').classList.toggle('active', tab === 'sold');
+    renderList();
+  };
+
+  window.markSold = async function(id) {
+    await updateDoc(doc(db, 'carvings', id), { sold: true });
+    const c = carvings.find(x => x.id === id);
+    if (c) c.sold = true;
+    renderList();
+  };
+
+  window.markAvailable = async function(id) {
+    await updateDoc(doc(db, 'carvings', id), { sold: false });
+    const c = carvings.find(x => x.id === id);
+    if (c) c.sold = false;
+    renderList();
+  };
+
+  window.deleteCarving = async function(id, photoURL) {
+    if (!confirm('Delete this carving permanently?')) return;
+    await deleteDoc(doc(db, 'carvings', id));
+    if (photoURL) {
+      try { await deleteObject(ref(storage, photoURL)); } catch(e) {}
+    }
+    carvings = carvings.filter(x => x.id !== id);
+    renderList();
+  };
+</script>
+</body>
+</html>
