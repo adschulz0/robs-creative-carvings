@@ -173,12 +173,8 @@
           <label>Photos (up to 5)</label>
           <div class="photo-actions">
             <label class="btn-photo-add">
-              📷 Camera
-              <input type="file" id="f-photo-camera" accept="image/*" capture="environment" onchange="onPhotosSelected(this)">
-            </label>
-            <label class="btn-photo-add">
-              🖼️ Gallery
-              <input type="file" id="f-photo-gallery" accept="image/*" multiple onchange="onPhotosSelected(this)">
+              📷 Add photo
+              <input type="file" id="f-photo-input" accept="image/*" multiple onchange="onPhotosSelected(this)">
             </label>
             <span class="photo-count" id="photo-count"></span>
           </div>
@@ -264,6 +260,11 @@
     });
     input.value = '';
     renderPhotoPreviews();
+    const countEl = document.getElementById('photo-count');
+    if (selectedFiles.length >= 5) {
+      document.getElementById('f-photo-input').disabled = true;
+      countEl.textContent = '5/5 — max reached';
+    }
   };
 
   function renderPhotoPreviews() {
