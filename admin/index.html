@@ -228,17 +228,6 @@
             <option>Adam</option>
           </select>
         </div>
-        <div class="fg">
-          <label>Selling</label>
-          <select id="f-selling">
-            <option value="">— select —</option>
-            <option>Rob</option>
-            <option>Kellie</option>
-            <option>Josh</option>
-            <option>Andrew</option>
-            <option>Adam</option>
-          </select>
-        </div>
         <div class="fg full">
           <label>Notes</label>
           <input type="text" id="f-notes" placeholder="Any notes about this piece">
@@ -372,7 +361,6 @@
     const blockingOut = document.getElementById('f-blocking').value;
     const hairingDetail = document.getElementById('f-hairing').value;
     const finishing = document.getElementById('f-finishing').value;
-    const selling = document.getElementById('f-selling').value;
     const notes = document.getElementById('f-notes').value.trim();
     const statusEl = document.getElementById('post-status');
     const btn = document.getElementById('btn-post');
@@ -409,7 +397,7 @@
       // Save to Firebase
       await addDoc(collection(db, 'carvings'), {
         name, cats, cat: cats[0], price, size, notes,
-        blockingOut, hairingDetail, finishing, selling,
+        blockingOut, hairingDetail, finishing,
         photoURLs, photoURL: photoURLs[0] || null,
         sold: false, added: Date.now()
       });
@@ -422,7 +410,7 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing, selling })
+          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing })
         });
         prog.style.display = 'none';
       } catch(e) {
@@ -439,7 +427,6 @@
       document.getElementById('f-blocking').value = '';
       document.getElementById('f-hairing').value = '';
       document.getElementById('f-finishing').value = '';
-      document.getElementById('f-selling').value = '';
       document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
       selectedFiles = [];
       renderPhotoPreviews();
