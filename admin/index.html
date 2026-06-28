@@ -394,22 +394,18 @@
     prog.style.display = 'none';
 
     try {
-      // Post to Google Sheets first to get piece ID
+      // GET next piece ID from sheet first
       let pieceID = null;
       try {
         prog.style.display = '';
-        prog.textContent = 'Saving to spreadsheet…';
-        const sheetRes = await fetch(SHEETS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing })
-        });
-        const sheetData = await sheetRes.json();
-        if (sheetData.success) pieceID = sheetData.pieceID;
+        prog.textContent = 'Getting piece ID…';
+        const getRes = await fetch(SHEETS_URL);
+        const getData = await getRes.json();
+        if (getData.success) pieceID = getData.pieceID;
         prog.style.display = 'none';
       } catch(e) {
         prog.style.display = 'none';
-        console.warn('Sheet sync failed:', e);
+        console.warn('Could not get piece ID:', e);
       }
 
       // Save to Firebase including pieceID
@@ -420,6 +416,22 @@
         photoURLs, photoURL: photoURLs[0] || null,
         sold: false, added: Date.now()
       });
+
+      // POST to Google Sheets
+      try {
+        prog.style.display = '';
+        prog.textContent = 'Saving to spreadsheet…';
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing })
+        });
+        prog.style.display = 'none';
+      } catch(e) {
+        prog.style.display = 'none';
+        console.warn('Sheet sync failed:', e);
+      }
 
       // Reset form
       document.getElementById('f-name').value = '';
