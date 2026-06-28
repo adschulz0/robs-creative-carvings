@@ -576,7 +576,17 @@
   window.markAvailable = async function(id) {
     await updateDoc(doc(db, 'carvings', id), { sold: false });
     const c = carvings.find(x => x.id === id);
-    if (c) c.sold = false;
+    if (c) {
+      c.sold = false;
+      try {
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'relist', pieceID: c.pieceID })
+        });
+      } catch(e) { console.warn('Sheet relist sync failed:', e); }
+    }
     renderList();
   };
 
