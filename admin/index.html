@@ -394,30 +394,32 @@
     prog.style.display = 'none';
 
     try {
-      // Save to Firebase
-      await addDoc(collection(db, 'carvings'), {
-        name, cats, cat: cats[0], price, size, notes,
-        blockingOut, hairingDetail, finishing,
-        photoURLs, photoURL: photoURLs[0] || null,
-        sold: false, added: Date.now()
-      });
-
-      // Post to Google Sheets
+      // Post to Google Sheets first to get piece ID
+      let pieceID = null;
       try {
         prog.style.display = '';
         prog.textContent = 'Saving to spreadsheet…';
-        await fetch(SHEETS_URL, {
+        const sheetRes = await fetch(SHEETS_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing })
         });
+        const sheetData = await sheetRes.json();
+        if (sheetData.success) pieceID = sheetData.pieceID;
         prog.style.display = 'none';
       } catch(e) {
         prog.style.display = 'none';
-        // Sheet sync failed but Firebase saved — don't block the user
         console.warn('Sheet sync failed:', e);
       }
+
+      // Save to Firebase including pieceID
+      await addDoc(collection(db, 'carvings'), {
+        name, cats, cat: cats[0], price, size, notes,
+        blockingOut, hairingDetail, finishing,
+        pieceID,
+        photoURLs, photoURL: photoURLs[0] || null,
+        sold: false, added: Date.now()
+      });
 
       // Reset form
       document.getElementById('f-name').value = '';
@@ -522,13 +524,11 @@
     try {
       await updateDoc(doc(db, 'carvings', id), { name: newName });
       c.name = newName;
-      // Sync rename to Google Sheets
       try {
         await fetch(SHEETS_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'rename', oldName, newName })
+          body: JSON.stringify({ action: 'rename', pieceID: c.pieceID, newName })
         });
       } catch(e) { console.warn('Sheet rename sync failed:', e); }
       renderList();
@@ -552,9 +552,8 @@
       try {
         await fetch(SHEETS_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'markSold', name: c.name })
+          body: JSON.stringify({ action: 'markSold', pieceID: c.pieceID })
         });
       } catch(e) { console.warn('Sheet markSold sync failed:', e); }
     }
@@ -571,22 +570,17 @@
   window.deleteCarving = async function(id) {
     if (!confirm('Delete this carving permanently?')) return;
     const c = carvings.find(x => x.id === id);
-    const name = c ? c.name : null;
     const photoURLs = c ? (c.photoURLs || (c.photoURL ? [c.photoURL] : [])) : [];
-    // Delete from Firebase
     await deleteDoc(doc(db, 'carvings', id));
-    // Delete photos from Storage
     for (const url of photoURLs) {
       try { await deleteObject(ref(storage, url)); } catch(e) {}
     }
-    // Sync delete to Google Sheets
-    if (name) {
+    if (c && c.pieceID) {
       try {
         await fetch(SHEETS_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'delete', name })
+          body: JSON.stringify({ action: 'delete', pieceID: c.pieceID })
         });
       } catch(e) { console.warn('Sheet delete sync failed:', e); }
     }
