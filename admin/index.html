@@ -505,7 +505,7 @@
             ${!c.sold
               ? `<button class="btn-sold" onclick="markSold('${c.id}')">Mark sold</button>`
               : `<button class="btn-relist" onclick="markAvailable('${c.id}')">Relist</button>`}
-            <button class="btn-del" onclick="deleteCarving('${c.id}', ${JSON.stringify(photos)})">🗑</button>
+            <button class="btn-del" onclick="deleteCarving('${c.id}')">🗑</button>
           </div>
         </div>
       `;
@@ -571,10 +571,11 @@
     renderList();
   };
 
-  window.deleteCarving = async function(id, photoURLs) {
+  window.deleteCarving = async function(id) {
     if (!confirm('Delete this carving permanently?')) return;
     const c = carvings.find(x => x.id === id);
     const name = c ? c.name : null;
+    const photoURLs = c ? (c.photoURLs || (c.photoURL ? [c.photoURL] : [])) : [];
     // Delete from Firebase
     await deleteDoc(doc(db, 'carvings', id));
     // Delete photos from Storage
