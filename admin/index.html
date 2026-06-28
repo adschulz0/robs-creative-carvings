@@ -547,7 +547,17 @@
   window.markSold = async function(id) {
     await updateDoc(doc(db, 'carvings', id), { sold: true });
     const c = carvings.find(x => x.id === id);
-    if (c) c.sold = true;
+    if (c) {
+      c.sold = true;
+      try {
+        await fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'markSold', name: c.name })
+        });
+      } catch(e) { console.warn('Sheet markSold sync failed:', e); }
+    }
     renderList();
   };
 
