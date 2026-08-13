@@ -222,6 +222,11 @@
   let lbPhotos = [];
   let lbIndex = 0;
 
+  // bumped each time renderGrid() runs, so if the user changes filters
+  // mid-load, the old sequential queue stops instead of continuing to
+  // fetch images for a grid that's no longer showing
+  let loadGeneration = 0;
+
   async function loadGallery() {
     try {
       const q = query(collection(db, 'carvings'), orderBy('added', 'desc'));
@@ -295,8 +300,16 @@
       const hasMultiple = photos.length > 1;
       const cats = Array.isArray(c.cats) ? c.cats : [c.cat];
 
+      // Only the first photo gets an <img> tag up front. The rest are stored
+      // as data-src on empty slide divs and only turned into real <img> tags
+      // (i.e. only fetched) when the user navigates to them — see
+      // loadSlideIfNeeded(). This stops every photo on every card from being
+      // requested at once.
       const slides = photos.length > 0
-        ? photos.map((url, pi) => `<div class="carousel-slide" onclick="openLightbox(${cardIndex}, ${pi})"><img src="${url}" alt="${c.name}" loading="lazy"></div>`).join('')
+        ? photos.map((url, pi) => pi === 0
+            ? `<div class="carousel-slide" onclick="openLightbox(${cardIndex}, ${pi})"><img class="js-first-photo" data-src="${url}" alt="${c.name}"></div>`
+            : `<div class="carousel-slide" data-src="${url}" onclick="openLightbox(${cardIndex}, ${pi})"></div>`
+          ).join('')
         : `<div class="carousel-slide"><div class="carousel-placeholder">${EMOJI[cats[0]] || '🪵'}</div></div>`;
 
       const dots = hasMultiple
@@ -331,6 +344,52 @@
       window._carouselState[i] = { current: 0, total: photos.length };
       window._cardPhotos[i] = photos;
     });
+
+    queueFirstPhotoLoads();
+  }
+
+  // ── ORDERED IMAGE LOADING ─────────────────────────────
+  // Instead of every card's first photo requesting at once (which makes all
+  // 40 crawl along together), only LOAD_CONCURRENCY photos fetch at a time,
+  // in card order (first card's photo first). As each finishes, the next
+  // one in line starts, so the top of the page fills in fast and the rest
+  // follow in sequence rather than everything loading slowly in parallel.
+  const LOAD_CONCURRENCY = 3;
+
+  function queueFirstPhotoLoads() {
+    loadGeneration++;
+    const myGen = loadGeneration;
+    const queue = Array.from(document.querySelectorAll('#gallery-grid img.js-first-photo[data-src]'));
+    let active = 0;
+
+    function fillSlots() {
+      if (myGen !== loadGeneration) return; // a newer filter/sort superseded this queue
+      while (active < LOAD_CONCURRENCY && queue.length) {
+        const img = queue.shift();
+        const src = img.dataset.src;
+        delete img.dataset.src;
+        active++;
+        const done = () => { active--; fillSlots(); };
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+        img.src = src;
+      }
+    }
+    fillSlots();
+  }
+
+  // Turns a placeholder slide (data-src) into a real <img> the first time
+  // it's navigated to, so each additional photo only loads on demand.
+  function loadSlideIfNeeded(track, index) {
+    const slide = track.children[index];
+    if (slide && slide.dataset.src) {
+      const img = document.createElement('img');
+      img.src = slide.dataset.src;
+      img.alt = '';
+      img.loading = 'lazy';
+      slide.appendChild(img);
+      delete slide.dataset.src;
+    }
   }
 
   window.slideCarousel = function(e, cardIndex, dir) {
@@ -339,7 +398,10 @@
     if (!state || state.total <= 1) return;
     state.current = (state.current + dir + state.total) % state.total;
     const track = document.getElementById(`track-${cardIndex}`);
-    if (track) track.style.transform = `translateX(-${state.current * 100}%)`;
+    if (track) {
+      track.style.transform = `translateX(-${state.current * 100}%)`;
+      loadSlideIfNeeded(track, state.current);
+    }
     for (let i = 0; i < state.total; i++) {
       const dot = document.getElementById(`dot-${cardIndex}-${i}`);
       if (dot) dot.classList.toggle('active', i === state.current);
