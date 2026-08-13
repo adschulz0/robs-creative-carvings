@@ -572,7 +572,7 @@
   window.markSold = async function(id) {
     const c = carvings.find(x => x.id === id);
     if (!c) return;
-    const input = prompt(`Sell price for "${c.name}"?`, c.price);
+    const input = prompt(`Sale price for "${c.name}"?`, c.price);
     if (input === null) return; // cancelled
     const sellPrice = parseFloat(input);
     if (isNaN(sellPrice) || sellPrice < 0) { alert('Enter a valid price.'); return; }
