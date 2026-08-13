@@ -118,9 +118,11 @@
     .li-name-row { display: flex; align-items: center; gap: 6px; }
     .btn-edit { background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.4; padding: 0 2px; line-height: 1; }
     .btn-edit:hover { opacity: 1; }
-    .name-edit-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .name-edit-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; flex-wrap: wrap; }
     .name-edit-input { flex: 1; padding: 5px 8px; border: 1px solid var(--accent); border-radius: 6px; font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); min-width: 0; }
     .name-edit-input:focus { outline: none; }
+    .price-edit-input { width: 76px; flex-shrink: 0; padding: 5px 8px; border: 1px solid var(--accent); border-radius: 6px; font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text); }
+    .price-edit-input:focus { outline: none; }
     .btn-save-name { background: var(--accent); color: white; border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
     .btn-save-name:hover { opacity: 0.9; }
     .btn-cancel-name { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 12px; color: var(--text2); cursor: pointer; font-family: inherit; white-space: nowrap; }
@@ -488,16 +490,17 @@
       return `
         <div class="list-item" id="item-${c.id}">
           <div class="li-thumb">
-            ${thumb ? `<img src="${thumb}" alt="${c.name}">` : (catEmoji[c.cat] || '🪵')}
+            ${thumb ? `<img src="${thumb}" alt="${c.name}" loading="lazy">` : (catEmoji[c.cat] || '🪵')}
           </div>
           <div class="li-info">
             <div class="li-name-row">
               <span class="li-name" id="name-text-${c.id}">${c.name}${c.sold ? '<span class="sold-pill">Sold</span>' : ''}${photoCount > 1 ? `<span class="photo-badge">📷 ${photoCount}</span>` : ''}</span>
-              <button class="btn-edit" onclick="startEdit('${c.id}', '${c.name.replace(/'/g, "\\'")}')">✏️</button>
+              <button class="btn-edit" onclick="startEdit('${c.id}')">✏️</button>
             </div>
             <div id="name-edit-${c.id}" class="name-edit-row" style="display:none">
               <input class="name-edit-input" id="name-input-${c.id}" type="text" value="${c.name}">
-              <button class="btn-save-name" onclick="saveName('${c.id}')">Save</button>
+              <input class="price-edit-input" id="price-input-${c.id}" type="number" min="0" value="${c.price}">
+              <button class="btn-save-name" onclick="saveEdit('${c.id}')">Save</button>
               <button class="btn-cancel-name" onclick="cancelEdit('${c.id}')">Cancel</button>
             </div>
             <div class="li-meta">${Array.isArray(c.cats) ? c.cats.join(', ') : c.cat}${c.size ? ` · <span class="size-badge size-${c.size.toLowerCase()}">${c.size}</span>` : ''}</div>
@@ -514,13 +517,20 @@
     }).join('') + '</div>';
   }
 
-  window.startEdit = function(id, currentName) {
+  window.startEdit = function(id) {
+    const c = carvings.find(x => x.id === id);
+    if (!c) return;
     document.getElementById(`name-text-${id}`).style.display = 'none';
     document.getElementById(`name-edit-${id}`).style.display = 'flex';
-    const input = document.getElementById(`name-input-${id}`);
-    input.focus();
-    input.select();
-    input.onkeydown = e => { if (e.key === 'Enter') saveName(id); if (e.key === 'Escape') cancelEdit(id); };
+    const nameInput = document.getElementById(`name-input-${id}`);
+    const priceInput = document.getElementById(`price-input-${id}`);
+    nameInput.value = c.name;
+    priceInput.value = c.price;
+    nameInput.focus();
+    nameInput.select();
+    const handleKey = e => { if (e.key === 'Enter') saveEdit(id); if (e.key === 'Escape') cancelEdit(id); };
+    nameInput.onkeydown = handleKey;
+    priceInput.onkeydown = handleKey;
   };
 
   window.cancelEdit = function(id) {
@@ -528,22 +538,24 @@
     document.getElementById(`name-edit-${id}`).style.display = 'none';
   };
 
-  window.saveName = async function(id) {
+  window.saveEdit = async function(id) {
     const newName = document.getElementById(`name-input-${id}`).value.trim();
+    const newPrice = parseFloat(document.getElementById(`price-input-${id}`).value);
     if (!newName) return;
+    if (isNaN(newPrice) || newPrice < 0) { alert('Enter a valid price.'); return; }
     const c = carvings.find(x => x.id === id);
     if (!c) return;
-    const oldName = c.name;
     try {
-      await updateDoc(doc(db, 'carvings', id), { name: newName });
+      await updateDoc(doc(db, 'carvings', id), { name: newName, price: newPrice });
       c.name = newName;
+      c.price = newPrice;
       try {
         await fetch(SHEETS_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'rename', pieceID: c.pieceID, newName })
+          body: JSON.stringify({ action: 'rename', pieceID: c.pieceID, newName, newPrice })
         });
-      } catch(e) { console.warn('Sheet rename sync failed:', e); }
+      } catch(e) { console.warn('Sheet edit sync failed:', e); }
       renderList();
     } catch(e) {
       alert('Failed to save. Check your connection.');
@@ -558,19 +570,24 @@
   };
 
   window.markSold = async function(id) {
-    await updateDoc(doc(db, 'carvings', id), { sold: true });
     const c = carvings.find(x => x.id === id);
-    if (c) {
-      c.sold = true;
-      try {
-        await fetch(SHEETS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'markSold', pieceID: c.pieceID })
-        });
-      } catch(e) { console.warn('Sheet markSold sync failed:', e); }
-    }
+    if (!c) return;
+    const input = prompt(`Sell price for "${c.name}"?`, c.price);
+    if (input === null) return; // cancelled
+    const sellPrice = parseFloat(input);
+    if (isNaN(sellPrice) || sellPrice < 0) { alert('Enter a valid price.'); return; }
+
+    await updateDoc(doc(db, 'carvings', id), { sold: true, price: sellPrice });
+    c.sold = true;
+    c.price = sellPrice;
+    try {
+      await fetch(SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'markSold', pieceID: c.pieceID, sellPrice })
+      });
+    } catch(e) { console.warn('Sheet markSold sync failed:', e); }
     renderList();
   };
 
