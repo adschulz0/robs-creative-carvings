@@ -195,38 +195,35 @@
             <label class="cat-check"><input type="checkbox" name="cat" value="Misc"> Misc</label>
           </div>
         </div>
-        <div class="fg">
-          <label>Blocking Out</label>
-          <select id="f-blocking">
-            <option value="">— select —</option>
-            <option>Rob</option>
-            <option>Kellie</option>
-            <option>Josh</option>
-            <option>Andrew</option>
-            <option>Adam</option>
-          </select>
+        <div class="fg full">
+          <label>Blocking Out (select all who worked this stage)</label>
+          <div class="cat-checks">
+            <label class="cat-check"><input type="checkbox" name="blocking" value="Rob"> Rob</label>
+            <label class="cat-check"><input type="checkbox" name="blocking" value="Kellie"> Kellie</label>
+            <label class="cat-check"><input type="checkbox" name="blocking" value="Josh"> Josh</label>
+            <label class="cat-check"><input type="checkbox" name="blocking" value="Andrew"> Andrew</label>
+            <label class="cat-check"><input type="checkbox" name="blocking" value="Adam"> Adam</label>
+          </div>
         </div>
-        <div class="fg">
-          <label>Hairing / Detail</label>
-          <select id="f-hairing">
-            <option value="">— select —</option>
-            <option>Rob</option>
-            <option>Kellie</option>
-            <option>Josh</option>
-            <option>Andrew</option>
-            <option>Adam</option>
-          </select>
+        <div class="fg full">
+          <label>Hairing / Detail (select all who worked this stage)</label>
+          <div class="cat-checks">
+            <label class="cat-check"><input type="checkbox" name="hairing" value="Rob"> Rob</label>
+            <label class="cat-check"><input type="checkbox" name="hairing" value="Kellie"> Kellie</label>
+            <label class="cat-check"><input type="checkbox" name="hairing" value="Josh"> Josh</label>
+            <label class="cat-check"><input type="checkbox" name="hairing" value="Andrew"> Andrew</label>
+            <label class="cat-check"><input type="checkbox" name="hairing" value="Adam"> Adam</label>
+          </div>
         </div>
-        <div class="fg">
-          <label>Finishing</label>
-          <select id="f-finishing">
-            <option value="">— select —</option>
-            <option>Rob</option>
-            <option>Kellie</option>
-            <option>Josh</option>
-            <option>Andrew</option>
-            <option>Adam</option>
-          </select>
+        <div class="fg full">
+          <label>Finishing (select all who worked this stage)</label>
+          <div class="cat-checks">
+            <label class="cat-check"><input type="checkbox" name="finishing" value="Rob"> Rob</label>
+            <label class="cat-check"><input type="checkbox" name="finishing" value="Kellie"> Kellie</label>
+            <label class="cat-check"><input type="checkbox" name="finishing" value="Josh"> Josh</label>
+            <label class="cat-check"><input type="checkbox" name="finishing" value="Andrew"> Andrew</label>
+            <label class="cat-check"><input type="checkbox" name="finishing" value="Adam"> Adam</label>
+          </div>
         </div>
         <div class="fg full">
           <label>Notes</label>
@@ -358,9 +355,9 @@
     const cats = Array.from(document.querySelectorAll('input[name="cat"]:checked')).map(c => c.value);
     const price = parseFloat(document.getElementById('f-price').value);
     const size = document.getElementById('f-size').value;
-    const blockingOut = document.getElementById('f-blocking').value;
-    const hairingDetail = document.getElementById('f-hairing').value;
-    const finishing = document.getElementById('f-finishing').value;
+    const blockingOut = Array.from(document.querySelectorAll('input[name="blocking"]:checked')).map(c => c.value);
+    const hairingDetail = Array.from(document.querySelectorAll('input[name="hairing"]:checked')).map(c => c.value);
+    const finishing = Array.from(document.querySelectorAll('input[name="finishing"]:checked')).map(c => c.value);
     const notes = document.getElementById('f-notes').value.trim();
     const statusEl = document.getElementById('post-status');
     const btn = document.getElementById('btn-post');
@@ -408,7 +405,7 @@
         console.warn('Could not get piece ID:', e);
       }
 
-      // Save to Firebase including pieceID
+      // Save to Firebase including pieceID (roles stored as arrays)
       await addDoc(collection(db, 'carvings'), {
         name, cats, cat: cats[0], price, size, notes,
         blockingOut, hairingDetail, finishing,
@@ -417,7 +414,8 @@
         sold: false, added: Date.now()
       });
 
-      // POST to Google Sheets
+      // POST to Google Sheets (roles joined into comma-separated strings
+      // so they land in the sheet's multi-select cells, e.g. "Rob, Adam")
       try {
         prog.style.display = '';
         prog.textContent = 'Saving to spreadsheet…';
@@ -425,7 +423,13 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'add', name, price, notes, blockingOut, hairingDetail, finishing })
+          body: JSON.stringify({
+            action: 'add',
+            name, price, notes,
+            blockingOut: blockingOut.join(', '),
+            hairingDetail: hairingDetail.join(', '),
+            finishing: finishing.join(', ')
+          })
         });
         prog.style.display = 'none';
       } catch(e) {
@@ -438,10 +442,7 @@
       document.getElementById('f-price').value = '';
       document.getElementById('f-size').value = '';
       document.getElementById('f-notes').value = '';
-      document.getElementById('f-blocking').value = '';
-      document.getElementById('f-hairing').value = '';
-      document.getElementById('f-finishing').value = '';
-      document.querySelectorAll('input[name="cat"]').forEach(c => c.checked = false);
+      document.querySelectorAll('input[name="cat"], input[name="blocking"], input[name="hairing"], input[name="finishing"]').forEach(c => c.checked = false);
       selectedFiles = [];
       renderPhotoPreviews();
       statusEl.textContent = 'Posted!';
